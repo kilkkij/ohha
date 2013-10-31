@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package ohha;
+import UI.UI;
 
 /**
  *
@@ -14,6 +15,8 @@ public class Ohha {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        UI ui = new UI();
+        ui.run();
+        ui.log("moi");
     }
 }
