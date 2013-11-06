@@ -15,6 +15,11 @@ public class Vector {
         this.y = y;
     }
     
+    public Vector(Vector other) {
+        this.x = other.getX();
+        this.y = other.getY();
+    }
+    
     public void increment(Vector other) {
         x += other.getX();
         y += other.getY();
@@ -57,6 +62,25 @@ public class Vector {
     @Override
     public String toString() {
         return "[" + x + ", " + y + "]";
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Vector)) {
+            return false;
+        }
+        Vector other = (Vector) obj;
+        return x == other.x && y == other.y;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.x) ^ 
+                (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.y) ^ 
+                (Double.doubleToLongBits(this.y) >>> 32));
+        return hash;
     }
     
 } 

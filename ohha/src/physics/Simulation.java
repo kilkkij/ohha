@@ -16,17 +16,17 @@ public class Simulation {
     }
     
     public void step(double dt) {
-        for (Item item: items) {
-            item.apply_gravity(dt, g);
-        }
-        for (Item item: items) {
-            item.step(dt);
-        }
         for (int i = 0; i < items.size(); i++) {
             for (int j = i+1; j < items.size(); j++) {
 //                System.out.println("" + i + ", " + j);
                 items.get(i).resolveCollision(items.get(j));
             }
+        }
+        for (Item item: items) {
+            item.apply_gravity(dt, g);
+        }
+        for (Item item: items) {
+            item.step(dt);
         }
     }
     
@@ -36,10 +36,10 @@ public class Simulation {
      * @param item 
      */
     public void addItem(Item item) {
-        getItems().add(item);
+        items.add(item);
     }
 
-    public List<Item> getItems() {
+    public Iterable<Item> getItems() {
         return items;
     }
 

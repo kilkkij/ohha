@@ -4,21 +4,26 @@ import java.awt.Container;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+import physics.Item;
 import physics.Simulation;
+import physics.SimulationEnvironment;
 
 public class UI implements Runnable {
-    
+
+    private Canvas canvas;
     private JFrame frame;
-    private final Simulation sim;
+    private final SimulationEnvironment simEnv;
     private int width;
     private int height;
     private double dpu;
     
-    public UI(Simulation sim, int width, int height, double dpu) {
-        this.sim = sim;
+    public UI(SimulationEnvironment simEnv, int width, int height, double dpu) {
         this.dpu = dpu;         // dots per simulation unit
         this.width = width;
         this.height = height;
+        this.simEnv = simEnv;
+        simEnv.addUI(this);
+
     }
     
     public void log(String tuloste) {
@@ -35,12 +40,21 @@ public class UI implements Runnable {
         frame.setVisible(true);
     }
     
+    public void update() {
+        canvas.repaint();
+    }
+    
     public JFrame getFrame() {
         return frame;
     }
 
     private void addComponents(Container frame) {
-        frame.add(new Canvas(sim, dpu, width, height));
+        this.canvas = new Canvas(this, dpu, width, height);
+        frame.add(canvas);
+    }
+
+    Iterable<Item> getItems() {
+        return simEnv.getItems();
     }
     
 }

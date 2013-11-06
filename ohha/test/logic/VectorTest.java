@@ -61,7 +61,13 @@ public class VectorTest {
     public void distanceLaskeeOikein() {
         double expResult = Math.sqrt(18);
         double result = vector.distance(other);
-        assertEquals(result, expResult, EPSILON);
+        assertEquals(expResult, result, EPSILON);
+    }
+    
+    @Test
+    public void vertailuToimii() {
+        Vector same = new Vector(vector.getX(), vector.getY());
+        assertEquals(true, vector.equals(same));
     }
 
 }

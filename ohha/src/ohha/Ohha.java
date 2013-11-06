@@ -2,9 +2,10 @@ package ohha;
 import UI.UI;
 import java.util.Random;
 import javax.swing.SwingUtilities;
-import physics.Rectangle;
+import physics.AxisAlignedRectangle;
 import physics.Simulation;
 import logic.Vector;
+import physics.SimulationEnvironment;
 
 public class Ohha {
     
@@ -14,25 +15,35 @@ public class Ohha {
     }
     
     public static void scenario() {
-        Simulation sim = new Simulation(0.05);
-        sim.addItem(new Rectangle(0., new Vector(0., 0.), 2., .3));
-        sim.addItem(new Rectangle(
+        Simulation sim = new Simulation(0.5);
+        sim.addItem(new AxisAlignedRectangle(
+                0., new Vector(0., 0.), 2., .3));
+        sim.addItem(new AxisAlignedRectangle(
                 1., new Vector(-1., 1.), new Vector(.1, 0.), .3, .3));
-        sim.addItem(new Rectangle(1., new Vector(-.5, 1.), .3, .3));
-        UI ui = new UI(sim, 400, 400, 100.);
-        SwingUtilities.invokeLater(ui);
+        sim.addItem(new AxisAlignedRectangle(
+                1., new Vector(-.5, 1.1), .3, .3));
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 400, 400, 100.);
+        ui.run();
+        simEnv.run();
     }
     
     public static void clusterScenario() {
-        Simulation sim = new Simulation(0.2);
-        sim.addItem(new Rectangle(0., new Vector(0., -1.), 2., .3));
+        Simulation sim = new Simulation(0.5);
+        sim.addItem(new AxisAlignedRectangle(0., new Vector(0., -1.), 3., .3));
+        addRandomItems(sim);
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 400, 400, 100.);
+        ui.run();
+        simEnv.run();
+    }
+
+    private static void addRandomItems(Simulation sim) {
         Random random = new Random();
-        for (int i=0; i<100; i++) {
+        for (int i=0; i<30; i++) {
             double x = 2*(random.nextDouble() - .5);
             double y = random.nextDouble() - .5;
-            sim.addItem(new Rectangle(1., new Vector(x, y), .1, .1));
+            sim.addItem(new AxisAlignedRectangle(1., new Vector(x, y), .1, .1));
         }
-        UI ui = new UI(sim, 400, 400, 100.);
-        SwingUtilities.invokeLater(ui);
     }
 }

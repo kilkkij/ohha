@@ -35,6 +35,10 @@ public abstract class Item {
     public Vector getPos() {
         return pos;
     }
+    
+    public Vector getVelocity() {
+        return velocity;
+    }
 
     public void apply_gravity(double dt, double g) {
         if (invMass > EPSILON) {
@@ -43,15 +47,13 @@ public abstract class Item {
     }
    
     public boolean resolveCollision(Item other) {
-        if (other instanceof Rectangle) {
-            return resolveCollision((Rectangle) other);
-        }
-        return false;
+        // tällä hetkellä vain AAR palikoita
+        return resolveCollision((AxisAlignedRectangle) other);
     }
     
     abstract public void draw(Graphics graphics, double dpu, int canvasWidth, 
             int canvasHeight);
 
-    abstract public boolean resolveCollision(Rectangle rectangle);
+    abstract public boolean resolveCollision(AxisAlignedRectangle rectangle);
         
 }
