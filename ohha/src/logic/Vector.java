@@ -25,6 +25,11 @@ public class Vector {
         y += other.getY();
     }
     
+    public void clear() {
+        x = 0.;
+        y = 0.;
+    }
+    
     public double dot(Vector other) {
         return x*other.x + y*other.y;
     }
@@ -57,6 +62,14 @@ public class Vector {
     
     public double getY() {
         return y;
+    }
+    
+    public void setX(double x) {
+        this.x = x;
+    }
+    
+    public void setY(double y) {
+        this.y = y;
     }
     
     @Override

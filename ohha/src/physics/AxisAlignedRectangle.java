@@ -23,14 +23,15 @@ public class AxisAlignedRectangle extends Item {
     }
     
     @Override
-    public boolean resolveCollision(AxisAlignedRectangle other) {
-        Vector relPos = pos.substract(other.pos);
+    public boolean resolveCollision(AxisAlignedRectangle other, double dt) {
+        Vector relPos = position.substract(other.position);
         Vector overlap = calculateOverlap(other, relPos);
         if (!(overlap.getX() > 0 && overlap.getY() > 0)) {
             // ei törmäystä
             return false;
         }
         Vector normal = calculateNormal(overlap, relPos);
+        sinkCorrection(other, overlap, normal);
         Vector relVel = velocity.substract(other.velocity);
         double relVelNormalProjection = relVel.dot(normal);
         if (relVelNormalProjection > 0) {
@@ -39,8 +40,7 @@ public class AxisAlignedRectangle extends Item {
             return false;
         }
         double impulse = calculateImpulse(relVelNormalProjection, other);
-        applyImpulse(normal, impulse, other);
-        sinkCorrection(other, overlap, normal);
+        applyImpulse(normal, impulse, other, dt);
         return true;
     }
     
@@ -67,35 +67,48 @@ public class AxisAlignedRectangle extends Item {
     }
 
     public double calculateImpulse(double relVelNormalProjection, Item other) {
-        final double elasticity = .5;
+        double elasticity = calculateElasticity(relVelNormalProjection);
         return -(1. + elasticity)*relVelNormalProjection/
                 (invMass + other.invMass);
-    }    
+    }
     
-    public void applyImpulse(Vector normal, double impulse, Item other) {
+    public double calculateElasticity(double relVelNormalProjection) {
+        final double elasticityLimit = 0.2;
+        if (Math.abs(relVelNormalProjection) > elasticityLimit) {
+            return .5;
+        } else {
+            return .0;
+        }
+    }
+    
+    public void applyImpulse(Vector normal, double impulse, Item other, 
+            double dt) {
         // liikemäärä muuttuu normaalin suuntaan
         velocity.increment(normal.multiply(impulse*invMass));
-        // toisen kappaleen liikeen muutos on vastakkainen
+        // toisen kappaleen liikkeen muutos on vastakkainen
         other.velocity.increment(normal.multiply(-impulse*other.invMass));
     }
     
     private void sinkCorrection(Item other, Vector overlap, Vector normal) {
-        double sinkCorrectFraction = .2;
+        double sinkCorrectFraction = .5;
+        double slop = 0.;
         double penetration = -overlap.dot(normal);
         Vector correction = normal.multiply(
-                penetration/(invMass + other.invMass)*sinkCorrectFraction);
-        pos.increment(correction.multiply(invMass));
-        other.pos.increment(correction.multiply(-other.invMass));
+                Math.max(penetration - slop, 0)/
+                (invMass + other.invMass)*sinkCorrectFraction);
+        position.increment(correction.multiply(invMass));
+        other.position.increment(correction.multiply(-other.invMass));
     }
     
     @Override
     public void draw(Graphics graphics, double dpu, int canvasWidth, 
             int canvasHeight) {
-        int x = toCanvasCoordinatesX(pos.getX(), dpu, canvasWidth);
-        int y = toCanvasCoordinatesY(pos.getY(), dpu, canvasHeight);
+        int x = toCanvasCoordinatesX(position.getX(), dpu, canvasWidth);
+        int y = toCanvasCoordinatesY(position.getY(), dpu, canvasHeight);
         int dx = (int) (width*dpu);
         int dy = (int) (height*dpu);
-        graphics.fillRect(x, y, dx, dy);
+//        graphics.fillRect(x, y, dx, dy);
+        graphics.drawRect(x, y, dx, dy);
     }
     
     public int toCanvasCoordinatesX(double x, double dpu, int canvasWidth) {

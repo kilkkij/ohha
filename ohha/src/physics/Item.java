@@ -6,8 +6,10 @@ import static logic.Lib.EPSILON;
 
 public abstract class Item {
     
-    protected Vector pos;
+    protected Vector position;
+    protected Vector warp;
     protected Vector velocity;
+    protected Vector acceleration;
     protected double invMass;
     
     public Item(double mass, Vector pos) {
@@ -15,8 +17,10 @@ public abstract class Item {
     }
     
     public Item(double mass, Vector pos, Vector velocity) {
-        this.pos = pos;
+        this.position = pos;
         this.velocity = velocity;
+        this.acceleration = new Vector();
+        this.warp = new Vector();
         setInverseMass(mass);
     }
     
@@ -28,32 +32,39 @@ public abstract class Item {
         }
     }
     
-    public void step(double dt) {
-        pos.increment(velocity.multiply(dt));
+    public void step(double dt, double g) {
+//        velocity.increment(acceleration.multiply(dt));
+//        applyGravity(dt, g);
+        position.increment(velocity.multiply(dt));
+//        position.increment(warp);
+//        acceleration.clear();
+//        warp.clear();
     }
     
     public Vector getPos() {
-        return pos;
+        return position;
     }
     
     public Vector getVelocity() {
         return velocity;
     }
 
-    public void apply_gravity(double dt, double g) {
+    public void applyGravity(double dt, double g) {
         if (invMass > EPSILON) {
-            velocity.increment(new Vector(0., -g*dt));
+            acceleration.setY(-g);
+            velocity.increment(acceleration.multiply(dt));
         }
     }
    
-    public boolean resolveCollision(Item other) {
-        // tällä hetkellä vain AAR palikoita
-        return resolveCollision((AxisAlignedRectangle) other);
+    public boolean resolveCollision(Item other, double dt) {
+        // tällä hetkellä vain AxisAlignedRectangle palikoita
+        return resolveCollision((AxisAlignedRectangle) other, dt);
     }
     
     abstract public void draw(Graphics graphics, double dpu, int canvasWidth, 
             int canvasHeight);
 
-    abstract public boolean resolveCollision(AxisAlignedRectangle rectangle);
+    abstract public boolean resolveCollision(AxisAlignedRectangle rectangle, 
+            double dt);
         
 }

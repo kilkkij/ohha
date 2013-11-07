@@ -16,17 +16,24 @@ public class Simulation {
     }
     
     public void step(double dt) {
+        resolveCollisions(dt);
+//        applyMovement(dt);
+    }
+
+    private void resolveCollisions(double dt) {
         for (int i = 0; i < items.size(); i++) {
             for (int j = i+1; j < items.size(); j++) {
 //                System.out.println("" + i + ", " + j);
-                items.get(i).resolveCollision(items.get(j));
+                items.get(i).resolveCollision(items.get(j), dt);
             }
+            items.get(i).applyGravity(dt, g);
+            items.get(i).step(dt, g);
         }
+    }
+
+    private void applyMovement(double dt) {
         for (Item item: items) {
-            item.apply_gravity(dt, g);
-        }
-        for (Item item: items) {
-            item.step(dt);
+            item.step(dt, g);
         }
     }
     
