@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
  */
 public class AAR_AAR_CollisionTest {
     
+    Material m;
     AxisAlignedRectangle rectangle;
     AxisAlignedRectangle mass1;
     AxisAlignedRectangle mass2;
@@ -22,13 +23,17 @@ public class AAR_AAR_CollisionTest {
     double impulse;
     
     public AAR_AAR_CollisionTest() {
-        rectangle = new AxisAlignedRectangle(0, new Vector(0, 0), 2, 1);
+        m = new Material(1., .5, .3);
+        rectangle = new AxisAlignedRectangle(
+                new Vector(0, 0), new Vector(0., 0.), 
+                m, 2, 1);
         mass1 = new AxisAlignedRectangle(
-            1, new Vector(0, 0), 2, 2);
+            new Vector(0, 0), new Vector(1., 1.), 
+                m, 2, 2);
         mass2 = new AxisAlignedRectangle(
-            2, new Vector(0, 0), 2, 2);
+            new Vector(0, 0), new Vector(-1., -1.), 
+                m, 2, 3);
         normal = new Vector(1, 0);
-        impulse = 1.;
     }
     
     @BeforeClass
@@ -50,7 +55,8 @@ public class AAR_AAR_CollisionTest {
     @Test
     public void laskeeSisennyksen() {
         AxisAlignedRectangle other = new AxisAlignedRectangle(
-                0, new Vector(0, 0), 1, 1);
+                new Vector(0, 0), new Vector(0., 0.), 
+                m, 1, 1);
         Vector relPos = new Vector(1, .5);
         Vector overlap = rectangle.calculateOverlap(other, relPos);
         Vector expected = new Vector(.5, .5);
@@ -59,15 +65,15 @@ public class AAR_AAR_CollisionTest {
     
     @Test
     public void laskeeNormaalin() {
-        Vector normal = rectangle.calculateNormal(
+        Vector n = rectangle.normal(
                 new Vector(1., 2.), new Vector(1, 1));
         Vector expected = new Vector(1, 0);
-        assertEquals(expected, normal);
-        normal = rectangle.calculateNormal(
+        assertEquals(expected, n);
+        n = rectangle.normal(
                 new Vector(1, 1), new Vector(-1, -1));
         assertTrue(
-                (normal.equals(new Vector(-1, 0))) ||
-                (normal.equals(new Vector(0, -1)))
+                (n.equals(new Vector(-1, 0))) ||
+                (n.equals(new Vector(0, -1)))
         );
     }
     
@@ -75,7 +81,7 @@ public class AAR_AAR_CollisionTest {
     public void impulssiOikeaanSuuntaan() {
         Vector v1a = new Vector(mass1.getVelocity());
         Vector v2a = new Vector(mass2.getVelocity());
-        mass1.applyImpulse(normal, impulse, mass2, .1);
+        mass1.applyImpulse(normal, 1., mass2, .1);
         assertTrue(mass1.getVelocity().getX() > v1a.getX());
         assertTrue(mass2.getVelocity().getX() < v2a.getX());
     }
@@ -84,8 +90,8 @@ public class AAR_AAR_CollisionTest {
     public void impulssiOikeaanSuuntaan2() {
         Vector v1a = new Vector(mass1.getVelocity());
         Vector v2a = new Vector(mass2.getVelocity());
-        Vector normal = new Vector(-1, 0);
-        mass1.applyImpulse(normal, impulse, mass2, .1);
+        Vector n = new Vector(0, -1);
+        mass1.applyImpulse(n, 1., mass2, .1);
         assertTrue(mass1.getVelocity().getY() < v1a.getY());
         assertTrue(mass2.getVelocity().getY() > v2a.getY());
     }
@@ -94,7 +100,7 @@ public class AAR_AAR_CollisionTest {
     public void NopeusMuuttuuEnemmanKevyelle() {
         Vector v1a = new Vector(mass1.getVelocity());
         Vector v2a = new Vector(mass2.getVelocity());
-        mass1.applyImpulse(normal, impulse, mass2, .1);
+        mass1.applyImpulse(normal, 1., mass2, .1);
         double dv1 = mass1.getVelocity().getX() - v1a.getX();
         double dv2 = mass2.getVelocity().getX() - v2a.getX();
         assertTrue(Math.abs(dv1) > Math.abs(dv2));

@@ -11,16 +11,14 @@ public abstract class Item {
     protected Vector velocity;
     protected Vector acceleration;
     protected double invMass;
+    protected Material material;
     
-    public Item(double mass, Vector pos) {
-        this(mass, pos, new Vector());
-    }
-    
-    public Item(double mass, Vector pos, Vector velocity) {
-        this.position = pos;
+    public Item(double mass, Vector position, Vector velocity, Material material) {
+        this.position = position;
         this.velocity = velocity;
         this.acceleration = new Vector();
         this.warp = new Vector();
+        this.material = material;
         setInverseMass(mass);
     }
     

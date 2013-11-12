@@ -1,5 +1,4 @@
 package physics;
-
 import logic.Vector;
 import java.awt.Graphics;
 
@@ -7,17 +6,10 @@ public class AxisAlignedRectangle extends Item {
     
     private final double width;
     private final double height;
-
-    public AxisAlignedRectangle(double mass, Vector pos, 
-            double width, double height) {
-        super(mass, pos);
-        this.width = width;
-        this.height = height;
-    }
     
-    public AxisAlignedRectangle(double mass, Vector pos, Vector speed,
-            double width, double height) {
-        super(mass, pos, speed);
+    public AxisAlignedRectangle(Vector position, Vector velocity,
+             Material material, double width, double height) {
+        super(width*height*material.density, position, velocity, material);
         this.width = width;
         this.height = height;
     }
@@ -30,7 +22,7 @@ public class AxisAlignedRectangle extends Item {
             // ei törmäystä
             return false;
         }
-        Vector normal = calculateNormal(overlap, relPos);
+        Vector normal = normal(overlap, relPos);
         sinkCorrection(other, overlap, normal);
         Vector relVel = velocity.substract(other.velocity);
         double relVelNormalProjection = relVel.dot(normal);
@@ -44,7 +36,7 @@ public class AxisAlignedRectangle extends Item {
         return true;
     }
     
-    public Vector calculateNormal(Vector overlap, Vector relPos) {
+    public Vector normal(Vector overlap, Vector relPos) {
         if (overlap.getX() < overlap.getY()) {
             return new Vector(Math.copySign(1, relPos.getX()), 0);
         }

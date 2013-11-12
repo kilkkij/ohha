@@ -25,33 +25,68 @@ public class Vector {
         y += other.getY();
     }
     
+    /**
+     * Aseta vektorin komponentit nolliksi.
+     */
     public void clear() {
         x = 0.;
         y = 0.;
     }
     
+    /**
+     *
+     * Pistetulo.
+     * @param other
+     * @return
+     */
     public double dot(Vector other) {
         return x*other.x + y*other.y;
     }
 
+    /**
+     *
+     * Euklidinen etäisyys.
+     * @param other
+     * @return
+     */
     public double distance(Vector other) {
         return Math.sqrt(
             Math.pow(getX() - other.getX(), 2) + 
             Math.pow(getY() - other.getY(), 2));
     }
         
+    /**
+     * 
+     * @param other
+     * @return
+     */
     public Vector add(Vector other) {
         return new Vector(x + other.x, y + other.y);
     }
     
+    /**
+     *
+     * @param other
+     * @return
+     */
     public Vector substract(Vector other) {
         return new Vector(x - other.x, y - other.y);
     }
     
+    /**
+     *
+     * @param factor
+     * @return
+     */
     public Vector multiply(double factor) {
         return new Vector(factor*x, factor*y);
     }
     
+    /**
+     * 
+     * Vektorin peilikuva y-akselin suunnassa.
+     * @return
+     */
     public Vector flipY() {
         return new Vector(x, -y);
     }
@@ -77,6 +112,12 @@ public class Vector {
         return "[" + x + ", " + y + "]";
     }
     
+    /**
+     *
+     * true jos komponentit ovat samat.
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Vector)) {
@@ -86,6 +127,10 @@ public class Vector {
         return x == other.x && y == other.y;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int hashCode() {
         int hash = 3;
