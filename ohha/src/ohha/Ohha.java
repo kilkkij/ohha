@@ -10,8 +10,8 @@ import physics.SimulationEnvironment;
 public class Ohha {
     
     public static void main(String[] args) {
-//        scenario();
-        clusterScenario();
+        scenario();
+//        clusterScenario();
 //        sinkScenario();
     }
     
