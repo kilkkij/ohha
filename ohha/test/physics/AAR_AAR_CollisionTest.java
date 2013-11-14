@@ -25,14 +25,14 @@ public class AAR_AAR_CollisionTest {
     public AAR_AAR_CollisionTest() {
         m = new Material(1., .5, .3);
         rectangle = new AxisAlignedRectangle(
-                new Vector(0, 0), new Vector(0., 0.), 
-                m, 2, 1);
+                new Vector(0, 0), 0., new Vector(0., 0.), 
+                m, 2, 1, false);
         mass1 = new AxisAlignedRectangle(
-            new Vector(0, 0), new Vector(1., 1.), 
-                m, 2, 2);
+            new Vector(0, 0), 0., new Vector(1., 1.), 
+                m, 2, 2, false);
         mass2 = new AxisAlignedRectangle(
-            new Vector(0, 0), new Vector(-1., -1.), 
-                m, 2, 3);
+            new Vector(0, 0), 0., new Vector(-1., -1.), 
+                m, 2, 3, false);
         normal = new Vector(1, 0);
     }
     
@@ -55,8 +55,8 @@ public class AAR_AAR_CollisionTest {
     @Test
     public void laskeeSisennyksen() {
         AxisAlignedRectangle other = new AxisAlignedRectangle(
-                new Vector(0, 0), new Vector(0., 0.), 
-                m, 1, 1);
+                new Vector(0, 0), 0., new Vector(0., 0.), 
+                m, 1, 1, false);
         Vector relPos = new Vector(1, .5);
         Vector overlap = rectangle.calculateOverlap(other, relPos);
         Vector expected = new Vector(.5, .5);

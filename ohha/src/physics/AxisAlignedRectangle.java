@@ -1,38 +1,68 @@
 package physics;
 import logic.Vector;
 import java.awt.Graphics;
+import logic.Lib;
 
 public class AxisAlignedRectangle extends Item {
     
-    private final double width;
-    private final double height;
+    public final double width;
+    public final double height;
     
-    public AxisAlignedRectangle(Vector position, Vector velocity,
-             Material material, double width, double height) {
-        super(width*height*material.density, position, velocity, material);
+    public AxisAlignedRectangle(Vector position, double angle, Vector velocity,
+             Material material, double width, double height, boolean static_) {
+        super(0., position, angle, velocity, material);
         this.width = width;
         this.height = height;
+        this.invMass = invMass(static_);
+    }
+    
+    public double invMass(boolean static_) {
+        if (static_) {
+            return 0.;
+        } else {
+            return 1./width*height*material.density;
+        }
     }
     
     @Override
-    public boolean resolveCollision(AxisAlignedRectangle other, double dt) {
+    public boolean resolveCollision(AxisAlignedRectangle other, double dt,
+            Vector gravity, int iterations) {
+        
+        // suhteellinen sijainti toisesta kappaleesta
         Vector relPos = position.substract(other.position);
+        
+        // vektori, joka ilmaisee suorakulmioiden jakaman alueen
         Vector overlap = calculateOverlap(other, relPos);
+        
+        // jätetään tähän, jos kappaleet eivät törmää
         if (!(overlap.getX() > 0 && overlap.getY() > 0)) {
-            // ei törmäystä
             return false;
         }
+        
+        // törmäyksen normaali
         Vector normal = normal(overlap, relPos);
-        sinkCorrection(other, overlap, normal);
+        
+        // siirretään myöhemmin kappaleita poispäin toisistaan
+        overlapCorrection(other, overlap, normal);
+        
+        // suhteellinen nopeus
         Vector relVel = velocity.substract(other.velocity);
+        
+        // suhteellisen nopeuden projektio normaalin suuntaan
         double relVelNormalProjection = relVel.dot(normal);
+        
+        // Jos kappaleet erkanevat toisistaan, ei käsitellä törmäyksenä.
         if (relVelNormalProjection > 0) {
-            // Kappaleet erkanevat toisistaan.
-            // Ei siis käsitellä törmäyksenä.
             return false;
         }
-        double impulse = calculateImpulse(relVelNormalProjection, other);
+        
+        // impulssin käsittely
+        double elasticity = calculateElasticity(
+                relVel, relVelNormalProjection, other, dt, gravity);
+        double impulse = calculateImpulse(
+                elasticity, relVelNormalProjection, other);
         applyImpulse(normal, impulse, other, dt);
+        
         return true;
     }
     
@@ -58,38 +88,41 @@ public class AxisAlignedRectangle extends Item {
         return new Vector(x_overlap, y_overlap);
     }
 
-    public double calculateImpulse(double relVelNormalProjection, Item other) {
-        double elasticity = calculateElasticity(relVelNormalProjection);
+    public double calculateImpulse(
+            double elasticity, double relVelNormalProjection, Item other) {
         return -(1. + elasticity)*relVelNormalProjection/
                 (invMass + other.invMass);
     }
     
-    public double calculateElasticity(double relVelNormalProjection) {
-        final double elasticityLimit = 0.2;
-        if (Math.abs(relVelNormalProjection) > elasticityLimit) {
-            return .5;
-        } else {
-            return .0;
+    public double calculateElasticity(
+            Vector relVel, double relVelNormalProjection, Item other, 
+            double dt, Vector gravity) {
+        if (relVel.square() > gravity.multiply(dt).square() - Lib.EPSILON) {
+            final double elasticityLimit = 0.2;
+            if (Math.abs(relVelNormalProjection) > elasticityLimit) {
+                return Math.min(material.elasticity, other.material.elasticity);
+            }
         }
+        return 0.;
     }
     
     public void applyImpulse(Vector normal, double impulse, Item other, 
             double dt) {
         // liikemäärä muuttuu normaalin suuntaan
-        velocity.increment(normal.multiply(impulse*invMass));
+        velocityIncrement.increment(normal.multiply(impulse*invMass));
         // toisen kappaleen liikkeen muutos on vastakkainen
-        other.velocity.increment(normal.multiply(-impulse*other.invMass));
+        other.velocityIncrement.increment(normal.multiply(-impulse*other.invMass));
     }
     
-    private void sinkCorrection(Item other, Vector overlap, Vector normal) {
+    private void overlapCorrection(Item other, Vector overlap, Vector normal) {
         double sinkCorrectFraction = .5;
         double slop = 0.;
         double penetration = -overlap.dot(normal);
         Vector correction = normal.multiply(
                 Math.max(penetration - slop, 0)/
                 (invMass + other.invMass)*sinkCorrectFraction);
-        position.increment(correction.multiply(invMass));
-        other.position.increment(correction.multiply(-other.invMass));
+        warp.increment(correction.multiply(invMass));
+        other.warp.increment(correction.multiply(-other.invMass));
     }
     
     @Override

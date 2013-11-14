@@ -51,8 +51,12 @@ public class Vector {
      */
     public double distance(Vector other) {
         return Math.sqrt(
-            Math.pow(getX() - other.getX(), 2) + 
-            Math.pow(getY() - other.getY(), 2));
+            Math.pow(x - other.x, 2) + 
+            Math.pow(y - other.y, 2));
+    }
+    
+    public double square() {
+        return x*x + y*y;
     }
         
     /**

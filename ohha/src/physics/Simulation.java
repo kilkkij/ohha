@@ -1,39 +1,60 @@
 package physics;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import logic.Vector;
 
 public class Simulation {
     
     private final List<Item> items;
-    private final double g;
+    private final Vector gravity;
+    private final int iterationCount = 1;
 
-    public Simulation(double g) {
+    public Simulation(Vector gravity) {
         items = new ArrayList<>();
-        this.g = g;
+        this.gravity = gravity;
     }
     
     public void step(double dt) {
         resolveCollisions(dt);
-//        applyMovement(dt);
+        applyMovement(dt);
+        applyCorrections();
+        applyImpulses(dt);
+        clearAccelerations();
     }
 
     private void resolveCollisions(double dt) {
-        for (int i = 0; i < items.size(); i++) {
-            for (int j = i+1; j < items.size(); j++) {
-//                System.out.println("" + i + ", " + j);
-                items.get(i).resolveCollision(items.get(j), dt);
+        for (int k = 0; k < iterationCount; k++) {
+            for (int i = 0; i < items.size(); i++) {
+                for (int j = i+1; j < items.size(); j++) {
+                    items.get(i).resolveCollision(
+                            items.get(j), dt, gravity, iterationCount);
+                }
             }
-            items.get(i).applyGravity(dt, g);
-            items.get(i).step(dt, g);
+        }
+    }
+    
+    private void applyImpulses(double dt) {
+        for (Item item: items) {
+            item.accelerate(dt, gravity);
         }
     }
 
     private void applyMovement(double dt) {
         for (Item item: items) {
-            item.step(dt, g);
+            item.move(dt, gravity);
+        }
+    }
+    
+    private void applyCorrections() {
+        for (Item item: items) {
+            item.applyOverlapCorrection();
+        }
+    }
+    
+    private void clearAccelerations() {
+        for (Item item: items) {
+            item.clearAcceleration();
         }
     }
     

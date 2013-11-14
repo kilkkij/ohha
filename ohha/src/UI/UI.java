@@ -4,8 +4,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+import physics.Item2;
 import physics.Item;
-import physics.Simulation;
 import physics.SimulationEnvironment;
 
 public class UI implements Runnable {
@@ -22,8 +22,6 @@ public class UI implements Runnable {
         this.width = width;
         this.height = height;
         this.simEnv = simEnv;
-        simEnv.addUI(this);
-
     }
     
     public void log(String tuloste) {
@@ -38,6 +36,7 @@ public class UI implements Runnable {
         addComponents(frame);
         frame.pack();
         frame.setVisible(true);
+        simEnv.addUI(this);
     }
     
     public void update() {
