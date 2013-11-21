@@ -4,30 +4,40 @@ import java.awt.Container;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
-import physics.Item2;
 import physics.Item;
 import physics.SimulationEnvironment;
 
+/**
+ * Käyttöliittymä. Sisältää JFramen, ja alueen, johon kappaleet piirretään.
+ * @author juho
+ */
 public class UI implements Runnable {
 
     private Canvas canvas;
     private JFrame frame;
     private final SimulationEnvironment simEnv;
-    private int width;
-    private int height;
-    private double dpu;
+    private final int width;
+    private final int height;
+    private final double dpu;
     
+    /**
+     *
+     * @param simEnv simulaatioympäristöolio
+     * @param width käyttöliittymän oletusleveys
+     * @param height käyttöliittymän oletuskorkeus
+     * @param dpu pikseleitä fysiikan yksikköä kohden
+     */
     public UI(SimulationEnvironment simEnv, int width, int height, double dpu) {
         this.dpu = dpu;         // dots per simulation unit
         this.width = width;
         this.height = height;
         this.simEnv = simEnv;
     }
-    
-    public void log(String tuloste) {
-        System.out.println(tuloste);
-    }
 
+    /**
+     * Muodosta käyttöliittymäympäristö.
+     * 
+     */
     @Override
     public void run() {
         frame = new JFrame("Box");
@@ -39,12 +49,11 @@ public class UI implements Runnable {
         simEnv.addUI(this);
     }
     
+    /**
+     * Päivitä ruutu.
+     */
     public void update() {
         canvas.repaint();
-    }
-    
-    public JFrame getFrame() {
-        return frame;
     }
 
     private void addComponents(Container frame) {

@@ -2,4 +2,4 @@ Canvas on JPanel-luokan jatke, ja piirtää kappaleet yksitellen (tällä hetkel
 
 SimulationEnvironment hoitaa ajankäytön, ja kutsuu askeleittain simulation-oliota. Törmäykset, aika-askeleet ja painovoima lasketaan Item-luokassa.
 
-Item-luokka tullee sisältämään shape-olion, jossa määritelläänn törmäystoiminnallisuus. Material-luokan attribuutteja ovat tiheys, elastisuus ja kitkakertoimet.
+Item-luokka on "rajapinta", jonka kautta käsitellään kappaleita. Material-luokan attribuutteja ovat tiheys, elastisuus ja kitkakertoimet.

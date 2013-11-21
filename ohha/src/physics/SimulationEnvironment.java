@@ -5,6 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
+/**
+ * Simulaatioympäristö. Hoitaa ajanhallinnan ja kutsuu simulaatiota.
+ * @author juho
+ */
 public class SimulationEnvironment implements ActionListener, Runnable {
     
     private UI ui;
@@ -13,6 +17,11 @@ public class SimulationEnvironment implements ActionListener, Runnable {
     private long timestamp;
     private final int timestep;
 
+    /**
+     *
+     * @param sim simulaatio
+     * @param timestep aika-askel
+     */
     public SimulationEnvironment(Simulation sim, int timestep) {
         this.sim = sim;
         this.timer = new Timer(timestep, this);
@@ -20,10 +29,18 @@ public class SimulationEnvironment implements ActionListener, Runnable {
         this.timestamp = 0;
     }
     
+    /**
+     * Lisää käyttöliittymä.
+     * @param ui
+     */
     public void addUI(UI ui) {
         this.ui = ui;
     }
 
+    /**
+     * Päivitä simulaatio ja käyttöliittymä.
+     * @param ae
+     */
     @Override
     public void actionPerformed(ActionEvent ae) {
         logTime(ae);
@@ -31,12 +48,15 @@ public class SimulationEnvironment implements ActionListener, Runnable {
         ui.update();
     }
     
-    public void logTime(ActionEvent ae) {
+    private void logTime(ActionEvent ae) {
         long dt = ae.getWhen() - timestamp;
-        ui.log("aika-askel: " + dt + " ms");
+        System.out.println("aika-askel: " + dt + " ms");
         timestamp += dt;
     }
 
+    /**
+     * Käynnistä simulaatio.
+     */
     @Override
     public void run() {
         timer.start();

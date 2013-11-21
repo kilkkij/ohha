@@ -16,45 +16,29 @@ import static org.junit.Assert.*;
 public class AAR_AAR_CollisionTest {
     
     Material m;
-    AxisAlignedRectangle rectangle;
-    AxisAlignedRectangle mass1;
-    AxisAlignedRectangle mass2;
+    ItemRectangle rectangle;
+    ItemRectangle mass1;
+    ItemRectangle mass2;
     Vector normal;
     double impulse;
     
     public AAR_AAR_CollisionTest() {
         m = new Material(1., .5, .3);
-        rectangle = new AxisAlignedRectangle(
+        rectangle = new ItemRectangle(
                 new Vector(0, 0), 0., new Vector(0., 0.), 
                 m, 2, 1, false);
-        mass1 = new AxisAlignedRectangle(
+        mass1 = new ItemRectangle(
             new Vector(0, 0), 0., new Vector(1., 1.), 
                 m, 2, 2, false);
-        mass2 = new AxisAlignedRectangle(
+        mass2 = new ItemRectangle(
             new Vector(0, 0), 0., new Vector(-1., -1.), 
                 m, 2, 3, false);
         normal = new Vector(1, 0);
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
     @Test
-    public void laskeeSisennyksen() {
-        AxisAlignedRectangle other = new AxisAlignedRectangle(
+    public void overlapCorrect() {
+        ItemRectangle other = new ItemRectangle(
                 new Vector(0, 0), 0., new Vector(0., 0.), 
                 m, 1, 1, false);
         Vector relPos = new Vector(1, .5);
@@ -64,7 +48,7 @@ public class AAR_AAR_CollisionTest {
     }
     
     @Test
-    public void laskeeNormaalin() {
+    public void normalCorrect() {
         Vector n = rectangle.normal(
                 new Vector(1., 2.), new Vector(1, 1));
         Vector expected = new Vector(1, 0);
@@ -78,7 +62,7 @@ public class AAR_AAR_CollisionTest {
     }
     
     @Test
-    public void impulssiOikeaanSuuntaan() {
+    public void impulseInCorrectDirection() {
         Vector v1a = new Vector(mass1.getVelocity());
         Vector v2a = new Vector(mass2.getVelocity());
         mass1.applyImpulse(normal, 1., mass2, .1);
@@ -87,7 +71,7 @@ public class AAR_AAR_CollisionTest {
     }
 
     @Test
-    public void impulssiOikeaanSuuntaan2() {
+    public void impulseInCorrectDirection2() {
         Vector v1a = new Vector(mass1.getVelocity());
         Vector v2a = new Vector(mass2.getVelocity());
         Vector n = new Vector(0, -1);
@@ -97,7 +81,7 @@ public class AAR_AAR_CollisionTest {
     }
     
     @Test
-    public void NopeusMuuttuuEnemmanKevyelle() {
+    public void velocityChangesMoreForLighterObject() {
         Vector v1a = new Vector(mass1.getVelocity());
         Vector v2a = new Vector(mass2.getVelocity());
         mass1.applyImpulse(normal, 1., mass2, .1);

@@ -8,6 +8,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/**
+ *
+ * @author juho
+ */
 public class VectorTest {
     
     Vector vector;
@@ -39,7 +43,7 @@ public class VectorTest {
      * Test of increment method, of class Vector.
      */
     @Test
-    public void incrementMuuttaaArvoaOikein() {
+    public void incrementIncrements() {
         vector.increment(other);
         assertEquals("[1.0, 3.0]", vector.toString());
     }
@@ -48,7 +52,7 @@ public class VectorTest {
      * Test of dot method, of class Vector.
      */
     @Test
-    public void dotLaskeeOikein() {
+    public void dotWorks() {
         double expResult = -2.;
         double result = vector.dot(other);
         assertEquals(expResult, result, EPSILON);
@@ -58,16 +62,24 @@ public class VectorTest {
      *
      */
     @Test
-    public void distanceLaskeeOikein() {
+    public void distanceWorks() {
         double expResult = Math.sqrt(18);
         double result = vector.distance(other);
         assertEquals(expResult, result, EPSILON);
     }
     
     @Test
-    public void vertailuToimii() {
+    public void comparisonWorks() {
         Vector same = new Vector(vector.getX(), vector.getY());
         assertEquals(true, vector.equals(same));
+    }
+    
+    @Test
+    public void rotationRotates30Degrees() {
+        vector = new Vector(1., 0.);
+        Vector rotated = vector.rotate(30./180*Math.PI);
+        assertEquals(Math.sqrt(3)/2, rotated.getX(), EPSILON);
+        assertEquals(.5, rotated.getY(), EPSILON);
     }
 
 }

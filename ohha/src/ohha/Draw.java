@@ -9,13 +9,17 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+/**
+ * Piirtämisen testaamista varten.
+ * @author juho
+ */
 public class Draw extends JPanel implements ActionListener {
 
     private int x = 100;
     private int y = 100;
     private double theta = Math.PI;
 
-    Rectangle rec = new Rectangle(x,y,25,25);
+    Rectangle rec = new Rectangle(x, y, 25, 25);
 
     Timer timer = new Timer(25,this);
 

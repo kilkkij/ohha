@@ -4,17 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import logic.Vector;
 
+/**
+ * Simulaatio. Askel askeleelta organisoi kappaleiden väliset törmäykset,
+ * niiden siirtämiset, pyörittämisen ja painovoiman. Sisältää Kappaleet 
+ * järjestetyssä tietorakenteessa.
+ * @author juho
+ */
 public class Simulation {
     
     private final List<Item> items;
     private final Vector gravity;
     private final int iterationCount = 1;
 
+    /**
+     * 
+     * @param gravity painovoimavektori
+     */
     public Simulation(Vector gravity) {
         items = new ArrayList<>();
         this.gravity = gravity;
     }
     
+    /**
+     * Aja askel simulaatiota.
+     * @param dt aika-askeleen pituus sekunneissa
+     */
     public void step(double dt) {
         resolveCollisions(dt);
         applyMovement(dt);
@@ -24,7 +38,9 @@ public class Simulation {
     }
 
     private void resolveCollisions(double dt) {
+        // laske törmäyksiä monta kertaa aika-askeleen sisällä
         for (int k = 0; k < iterationCount; k++) {
+            // looppi siten, että kaikkia mahdollisia pareja kutsutaan
             for (int i = 0; i < items.size(); i++) {
                 for (int j = i+1; j < items.size(); j++) {
                     items.get(i).resolveCollision(

@@ -1,20 +1,19 @@
 Aihe: fysiikkasimulaattori
 
-Kiinteiden kappaleiden fysiikkaa (törmäyksiä) simuloiva ohjelma, joka piirtää kappaleet reaaliaikaisesti ikkunaan.
+Kiinteiden kappaleiden, suorakaiteiden, fysiikkaa (törmäyksiä) simuloiva ohjelma, joka piirtää kappaleet reaaliaikaisesti ikkunaan.
 
-Kappaleet kokevat painovoiman, ja niihin vaikuttaa toisiinsa törmäysten lisäksi simulaatioympäristön reunat.
+Törmäysten lisäksi kappaleet kokevat myös painovoiman.
 
-Fysiikkamallinnuksen kohteita (~tärkeysjärjestyksessä):
- - ympyröiden ja suorakulmioiden liikemäärän vaihto
- - kappaleiden liikemäärämomentin vaihto
- - kappaleiden toisiinsa sisään vajoamisen esto
- - kimmoisuuden säätö
+Simulaatiota ajetaan vakiolla aika-askeleella siten, että aika-askel on vähintään ennaltamäärätty vakio.
+
+Toimintoja:
+ - suorakulmioiden liikemäärän vaihto
+ - kappalekohtainen materiaali
+ 
+Tulevia toimintoja:
  - kitka
- - simulaatioajan hallinta (jotta ajan kulku on johonkin pisteeseen asti stabiili)
- - monikulmiot
+ - liikemäärämomentin vaihto
 
-Mahdolliset käyttäjän toiminnot:
- - kappaleiden luonti käyttöliittymän avulla (ei lähdekoodissa)
- - fysiikan parametrien säätö
-
-Ei liene tarvetta I/O toiminnoille.
+Mahdollisia tulevia toimintoja:
+ - käyttäjän mahdollisuus lisätä kappaleita
+ - ympyrät

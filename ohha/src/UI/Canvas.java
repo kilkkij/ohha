@@ -3,14 +3,20 @@ package UI;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import javax.swing.JPanel;
 import logic.Vector;
-import physics.AxisAlignedRectangle;
+import physics.ItemRectangle;
 import physics.Item;
-import physics.Item2;
-import physics.Rectangle;
 
+/**
+ * Piirtoalusta. Sisältää kappaleiden piirtometodit ja muuttaa
+ * simulaatiokoordinaatit näytön koordinaateiksi.
+ * @author juho
+ */
 public class Canvas extends JPanel {
     
     private final UI ui;
@@ -18,14 +24,26 @@ public class Canvas extends JPanel {
     private final int width;
     private final int height;
 
+    /**
+     * 
+     * @param ui käyttöliittymäolio
+     * @param dpu "dots per unit"
+     * @param width leveys (jolla lasketaan kappaleiden sijainnit)
+     * @param height korkeus (jolla lasketaan kappaleiden sijainnit)
+     */
     public Canvas(UI ui, double dpu, int width, int height) {
         super.setBackground(Color.WHITE);
         this.ui = ui;
         this.dpu = dpu;
         this.width = width;
         this.height = height;
-    } 
-    
+    }
+
+    /**
+     * Piirtää käyttöliittymältä pyydetyt komponentit.
+     * Piirtometodi riippuu komponentin luokasta.
+     * @param graphics
+     */
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
@@ -44,31 +62,58 @@ public class Canvas extends JPanel {
     }
     
     private void drawItem(Item item, Graphics2D graphics) {
-        if (item instanceof AxisAlignedRectangle) {
+        if (item instanceof ItemRectangle) {
             drawRectangle(graphics, item);
         }
     }
     
     public void drawRectangle(Graphics2D graphics, Item item) {
+        
+        //
         Vector position = item.getPosition();
-        AxisAlignedRectangle rectangle = (AxisAlignedRectangle) item;
+        ItemRectangle rectangle = (ItemRectangle) item;
         double angle = item.getAngle();
-        int x = toCanvasCoordinatesX(position.getX() - rectangle.width/2);
-        int y = toCanvasCoordinatesY(position.getY() + rectangle.height/2);
-        int dx = (int) (rectangle.width*dpu);
-        int dy = (int) (rectangle.height*dpu);
+        
+        // sijainti ja koko ruudulla
+        double x = toCanvasCoordinatesX(position.getX() - rectangle.width/2);
+        double y = toCanvasCoordinatesY(position.getY() + rectangle.height/2);
+        double dx = rectangle.width*dpu;
+        double dy = rectangle.height*dpu;
+        
+        // 
+        Rectangle r = new Rectangle(
+            (int) x, (int) y,
+            (int) dx, (int) dy);
+        
+        // käännä
+        Path2D.Double path = new Path2D.Double();
+        path.append(r, false);
+        AffineTransform t = new AffineTransform();
+        t.translate(x, y);
+        t.rotate(angle);
+        t.translate(-x, -y);
+        path.transform(t);
+        
+        // piirrä
+        graphics.draw(path);
+        
+        // käsittele kierto
+//        graphics.rotate(-angle, x, y);
+//        graphics.rotate(angle, x, y);
+//        graphics.translate(width/2, height/2);
+//        graphics.rotate(-angle);
+//        graphics.translate(-width/2, -height/2);
+        
+        // piirrä
+//        graphics.drawRect(x, y, dx, dy);
 //        graphics.fillRect(x, y, dx, dy);
-        graphics.translate(width/2, height/2);
-        graphics.rotate(angle);
-        graphics.translate(-width/2, -height/2);
-        graphics.drawRect(x, y, dx, dy);
     }
     
-    public int toCanvasCoordinatesX(double x) {
-        return width/2 + (int) (dpu*x);
+    private double toCanvasCoordinatesX(double x) {
+        return width/2 + (dpu*x);
     }
 
-    public int toCanvasCoordinatesY(double y) {
-        return height/2 - (int) (dpu*y);
+    private double toCanvasCoordinatesY(double y) {
+        return height/2 - (dpu*y);
     }
 } 

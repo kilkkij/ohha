@@ -6,14 +6,12 @@ import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import physics.AxisAlignedRectangle;
+import physics.ItemRectangle;
 import physics.Simulation;
 import logic.Vector;
 import physics.Item;
-import physics.Item2;
+import unused.Item2;
 import physics.Material;
-import physics.Rectangle;
-import physics.Shape;
 import physics.SimulationEnvironment;
 
 public class Ohha {
@@ -68,24 +66,24 @@ public class Ohha {
     public static void scenario() {
         Simulation sim = new Simulation(new Vector(0., -.5));
         Material m = new Material(1., .5, .3);
-        sim.addItem(new AxisAlignedRectangle(
+        sim.addItem(new ItemRectangle(
                 new Vector(0., -.5), 0., new Vector(0., 0.), 
                 m, 2., .3, true));
-        sim.addItem(new AxisAlignedRectangle(
-                new Vector(-1., 0.), 0., new Vector(.1, 0.), 
+        sim.addItem(new ItemRectangle(
+                new Vector(-1., 0.), -.1, new Vector(.1, 0.), 
                 m, .3, .3, false));
-        sim.addItem(new AxisAlignedRectangle(
-                new Vector(-.5, .1), 0., new Vector(0., 0.), 
+        sim.addItem(new ItemRectangle(
+                new Vector(-.5, .1), 0.05, new Vector(0., 0.), 
                 m, .3, .3, false));
-        sim.addItem(new AxisAlignedRectangle(
+        sim.addItem(new ItemRectangle(
                 new Vector(.5, .1), 0., new Vector(0., 0.), 
                 m, .3, .3, false));
-        sim.addItem(new AxisAlignedRectangle(
+        sim.addItem(new ItemRectangle(
                 new Vector(.5, .6), 0., new Vector(0., 0.), 
                 m, .3, .3, false));
-        sim.addItem(new AxisAlignedRectangle(
-                new Vector(.5, 1.0), 0., new Vector(0., 0.), 
-                m, .3, .3, false));
+//        sim.addItem(new Rectangle(
+//                new Vector(.5, 1.0), 0., new Vector(0., 0.), 
+//                m, .3, .3, false));
         SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
         UI ui = new UI(simEnv, 400, 400, 100.);
         ui.run();
@@ -95,7 +93,7 @@ public class Ohha {
     public static void clusterScenario() {
         Simulation sim = new Simulation(new Vector(0., -.1));
         Material m = new Material(1., .5, .3);
-        sim.addItem(new AxisAlignedRectangle(
+        sim.addItem(new ItemRectangle(
                 new Vector(0., -1.), 0., new Vector(0., 0.), 
                 m, 3., .3, true));
         addRandomItems(sim, m);
@@ -135,7 +133,7 @@ public class Ohha {
             double x = 2*(random.nextDouble() - .5);
             double y = 3*(random.nextDouble() - .5) + 1;
             double vx = .1*(random.nextDouble() - .5);
-            sim.addItem(new AxisAlignedRectangle(
+            sim.addItem(new ItemRectangle(
                     new Vector(x, y), 0., new Vector(vx, 0), m, .1, .1, false));
         }
     }

@@ -1,6 +1,8 @@
-package physics;
+package unused;
 
+import unused.CollisionRectangleRectangle;
 import logic.Vector;
+import physics.Material;
 
 public class Item2 {
     

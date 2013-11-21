@@ -1,5 +1,9 @@
 package logic;
 
+/**
+ * Vektori. Tavanomaisia matemaattisia operaatioita.
+ * @author juho
+ */
 public class Vector { 
     
     private double x;
@@ -41,6 +45,16 @@ public class Vector {
      */
     public double dot(Vector other) {
         return x*other.x + y*other.y;
+    }
+    
+    /**
+     * Ristitulo. 
+     * ("z-komponentin" suuruus)
+     * @param other
+     * @return
+     */
+    public double cross(Vector other) {
+        return x*other.y - y*other.x;
     }
 
     /**
@@ -86,6 +100,18 @@ public class Vector {
         return new Vector(factor*x, factor*y);
     }
     
+    public Vector rotate(double angle) {
+        return new Vector(
+                x*Math.cos(angle) - y*Math.sin(angle),
+                x*Math.sin(angle) + y*Math.cos(angle));
+    }
+    
+    public void applyRotation(double angle) {
+        double newX = x*Math.cos(angle) - y*Math.sin(angle);
+        y = x*Math.sin(angle) + y*Math.cos(angle);
+        x = newX;
+    }
+    
     /**
      * 
      * Vektorin peilikuva y-akselin suunnassa.
@@ -118,7 +144,7 @@ public class Vector {
     
     /**
      *
-     * true jos komponentit ovat samat.
+     * true jos molemmat komponentit ovat samat.
      * @param obj
      * @return
      */

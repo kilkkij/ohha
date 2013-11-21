@@ -1,4 +1,6 @@
-package physics;
+package unused;
+
+import unused.Shape;
 
 public class Rectangle extends Shape {
     
