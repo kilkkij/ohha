@@ -29,6 +29,12 @@ public class Vector {
         y += other.getY();
     }
     
+    public void applyRotation(double angle) {
+        double newX = x*Math.cos(angle) - y*Math.sin(angle);
+        y = x*Math.sin(angle) + y*Math.cos(angle);
+        x = newX;
+    }
+    
     /**
      * Aseta vektorin komponentit nolliksi.
      */
@@ -57,6 +63,15 @@ public class Vector {
         return x*other.y - y*other.x;
     }
 
+    /**
+     * Ristitulo
+     * @param zComponent toisen vektorin z-komponentti
+     * @return
+     */
+    public Vector cross(double zComponent) {
+        return new Vector(-y*zComponent, x*zComponent);
+    }
+    
     /**
      *
      * Euklidinen etäisyys.
@@ -106,12 +121,6 @@ public class Vector {
                 x*Math.sin(angle) + y*Math.cos(angle));
     }
     
-    public void applyRotation(double angle) {
-        double newX = x*Math.cos(angle) - y*Math.sin(angle);
-        y = x*Math.sin(angle) + y*Math.cos(angle);
-        x = newX;
-    }
-    
     /**
      * 
      * Vektorin peilikuva y-akselin suunnassa.
@@ -135,6 +144,11 @@ public class Vector {
     
     public void setY(double y) {
         this.y = y;
+    }
+    
+    public void set(Vector vector) {
+        this.x = vector.x;
+        this.y = vector.y;
     }
     
     @Override

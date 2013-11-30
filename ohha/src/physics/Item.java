@@ -1,8 +1,6 @@
 package physics;
 
 import logic.Vector;
-import java.awt.Graphics;
-import logic.Lib;
 import static logic.Lib.EPSILON;
 
 /**
@@ -14,28 +12,31 @@ public abstract class Item {
     protected Vector position;
     protected double angle;
     protected Vector velocity;
+    protected double angularVelocity;
     protected Vector velocityIncrement;
+    protected double angularVelocityIncrement;
     protected Vector warp;
     protected double invMass;
-    protected double invInertia;
+    protected double invMoment;
     protected Material material;
     
     /**
      * 
-     * @param invMass massan käänteisluku
      * @param position sijaintivektori
      * @param angle kulma radiaaneissa
      * @param velocity nopeusvektori
+     * @param angularVelocity
      * @param material materiaaliolio
      */
-    public Item(double invMass, Vector position, double angle,
-            Vector velocity, Material material) {
+    public Item(Vector position, double angle,
+            Vector velocity, double angularVelocity, Material material) {
         this.position = position;
         this.angle = angle;
         this.velocity = velocity;
         this.velocityIncrement = new Vector();
+        this.angularVelocity = angularVelocity;
+        this.angularVelocityIncrement = 0;
         this.material = material;
-        this.invMass = invMass;
         this.warp = new Vector(0., 0.);
     }
     
@@ -48,6 +49,7 @@ public abstract class Item {
         if (invMass > EPSILON) {
             velocity.increment(velocityIncrement);
             velocity.increment(gravity.multiply(dt));
+            angularVelocity += angularVelocityIncrement;
         }
     }
     
@@ -56,15 +58,23 @@ public abstract class Item {
      */
     public void clearAcceleration() {
         velocityIncrement.clear();
+        angularVelocityIncrement = 0;
     }
     
     /**
      * Siirrä esineitä nopeusvektorin määrittämään suuntaan
      * @param dt aika-askel
-     * @param gravity painovoimavektori
      */
-    public void move(double dt, Vector gravity) {
+    public void move(double dt) {
         position.increment(velocity.multiply(dt));
+    }
+    
+    /**
+     * Käännä kappaletta
+     * @param dt aika-askel
+     */
+    public void turn(double dt) {
+        angle += angularVelocity*dt;
     }
    
     /**
@@ -77,7 +87,7 @@ public abstract class Item {
      */
     public boolean resolveCollision(
             Item other, double dt, Vector gravity, int iterations) {
-        // tällä hetkellä vain AxisAlignedRectangle palikoita
+        // tällä hetkellä vain laatikoita
         return resolveCollision(
                 (ItemRectangle) other, dt, gravity, iterations);
     }

@@ -58,7 +58,8 @@ public class Simulation {
 
     private void applyMovement(double dt) {
         for (Item item: items) {
-            item.move(dt, gravity);
+            item.move(dt);
+            item.turn(dt);
         }
     }
     

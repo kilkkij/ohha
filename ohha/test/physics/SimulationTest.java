@@ -23,7 +23,7 @@ public class SimulationTest {
         sim = new Simulation(new Vector(0., 0.));
         Material m = new Material(1., .5, .3);
         sim.addItem(new ItemRectangle(
-                new Vector(0., 0.), 0., new Vector(1., 0.), 
+                new Vector(0., 0.), 0., new Vector(1., 0.), 0.,
                 m, 1., 1., true));
     }
     

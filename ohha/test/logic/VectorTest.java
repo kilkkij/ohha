@@ -39,18 +39,12 @@ public class VectorTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of increment method, of class Vector.
-     */
     @Test
     public void incrementIncrements() {
         vector.increment(other);
         assertEquals("[1.0, 3.0]", vector.toString());
     }
 
-    /**
-     * Test of dot method, of class Vector.
-     */
     @Test
     public void dotWorks() {
         double expResult = -2.;
@@ -58,9 +52,14 @@ public class VectorTest {
         assertEquals(expResult, result, EPSILON);
     }
     
-    /**
-     *
-     */
+    @Test
+    public void crossWorks() {
+        Vector A = new Vector(1., 0.);
+        Vector B = new Vector(0., 1);
+        double expResult = 1.;
+        assertEquals(expResult, A.cross(B), EPSILON);
+    }
+    
     @Test
     public void distanceWorks() {
         double expResult = Math.sqrt(18);

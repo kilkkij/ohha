@@ -1,5 +1,7 @@
 Aihe: fysiikkasimulaattori
 
+Tämä on vielä aika vanha versio, anteeksipyytelyt koodikatselmoijalle.
+
 Kiinteiden kappaleiden, suorakaiteiden, fysiikkaa (törmäyksiä) simuloiva ohjelma, joka piirtää kappaleet reaaliaikaisesti ikkunaan.
 
 Törmäysten lisäksi kappaleet kokevat myös painovoiman.

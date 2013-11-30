@@ -89,9 +89,9 @@ public class Canvas extends JPanel {
         Path2D.Double path = new Path2D.Double();
         path.append(r, false);
         AffineTransform t = new AffineTransform();
-        t.translate(x, y);
-        t.rotate(angle);
-        t.translate(-x, -y);
+        t.translate(x + dx/2, y + dy/2);
+        t.rotate(-angle);
+        t.translate(-x - dx/2, -y - dy/2);
         path.transform(t);
         
         // piirrä

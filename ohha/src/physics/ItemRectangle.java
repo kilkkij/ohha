@@ -1,6 +1,7 @@
 package physics;
 import logic.Vector;
 import java.util.ArrayList;
+import logic.RectRectCollision;
 import logic.Lib;
 import logic.Edge;
 import logic.Projection;
@@ -13,25 +14,28 @@ public class ItemRectangle extends Item {
     
     public final double width;
     public final double height;
-    private ArrayList<Vector> vertices;
-    private ArrayList<Vector> normals;
+    private final ArrayList<Vector> vertices;
+    private final ArrayList<Vector> normals;
     
     /**
      * Kutsuu yläluokan metodia.
      * @param position
      * @param angle
      * @param velocity
+     * @param angularVelocity
      * @param material
      * @param width
      * @param height
      * @param static_ jos true, kappale ei reagoi törmäyksiin
      */
-    public ItemRectangle(Vector position, double angle, Vector velocity,
-             Material material, double width, double height, boolean static_) {
-        super(0., position, angle, velocity, material);
+    public ItemRectangle(Vector position, double angle, Vector velocity, 
+            double angularVelocity,
+            Material material, double width, double height, boolean static_) {
+        super(position, angle, velocity, angularVelocity, material);
         this.width = width;
         this.height = height;
         this.invMass = invMass(static_, width, height, material.density);
+        this.invMoment = invInertia(static_, width, height, material.density);
         this.vertices = vertices(position, width, height, angle);
         this.normals = normals(position, width, height, angle);
     }
@@ -81,11 +85,9 @@ public class ItemRectangle extends Item {
         vertices.add(new Vector(-width/2, -height/2));
         // alaoikea
         vertices.add(new Vector(width/2, -height/2));
-        // käännä ensin
+        // käännä
         applyRotation(vertices, angle);
-        // sitten siirrä paikalleen
-        applyTranslation(vertices, pos);
-        //
+        
         return vertices;
     }
     
@@ -99,85 +101,179 @@ public class ItemRectangle extends Item {
             vector.applyRotation(angle);
         }
     }
-
-    /**
-     * Siirrä.
-     * @param vectors iteroitavat vektorit
-     * @param increment vektori, joka lisätään kaikkiin
-     */
-    public static void applyTranslation(
-            Iterable<Vector> vectors, Vector increment) {
-        for (Vector vector: vectors) {
-            vector.increment(increment);
-        }
-    }
     
     public static double invMass(boolean static_, 
             double width, double height, double density) {
         if (static_) {
             return 0.;
         } else {
-            return 1./width*height*density;
+            return 1./(width*height*density);
         }
     }
     
-    public static double invInertia(boolean static_, double mass, 
-            double width, double height) {
+    public static double invInertia(boolean static_, 
+            double width, double height, double density) {
         if (static_) {
             return 0;
         } else {
-            return mass/12.*(width*width + height*height);
+            double inertia = width*height*density/12*
+                    (width*width + height*height);
+            return 1./inertia;
         }
     }
     
-    /**
-     * 
-     * @param other
-     * @return true, jos palikat törmäävät.
-     */
-    public boolean collidesWith(ItemRectangle other) {
+    @Override
+    public void turn(double dt) {
+        super.turn(dt);
+        applyRotation(vertices, angularVelocity*dt);
+        applyRotation(normals, angularVelocity*dt);
+    }
+    
+    @Override
+    public boolean resolveCollision(ItemRectangle other, 
+            double dt, Vector gravity, int iterations) {
+        RectRectCollision collision = new RectRectCollision(this, other);
+        if (!collisionHappens(collision)) {
+            return false;
+        }
+//        overlapCorrection(other, collision.getNormal(), collision.getOverlap());
+        Vector relVel = velocity.substract(other.velocity);
+        Vector rotVel = collision.getPoint().substract(position).
+                cross(angularVelocity);
+        Vector otherRotVel = collision.getPoint().substract(other.position).
+                cross(other.angularVelocity);
+        Vector totVel = relVel.add(rotVel.substract(otherRotVel));
+        System.out.println("totvel " + totVel);
+        double relVelNormalProjection = collision.getNormal().dot(totVel);
+        if (relVelNormalProjection > 0) {
+            System.out.println("relVelNormalProjection " + relVelNormalProjection);
+            System.out.println("normal " + collision.getNormal());
+            System.out.println("relVel " + relVel);
+            return false;
+        }
+        double elasticity = calculateElasticity(
+                relVel, relVelNormalProjection, other, dt, gravity);
+        double impulse = calculateRotatingImpulse(
+                elasticity, relVelNormalProjection, other, collision);
+        applyRotatingImpulse(collision, impulse, this);
+        applyRotatingImpulse(collision, -impulse, other);
+        System.out.println("----collision resolved-----");
+        return true;
+    }
+    
+    private boolean collisionHappens(RectRectCollision collision) {
+        // pidetään kirjaa pienimmän päällekkäisyyden akselista
+        collision.setOverlap(Double.MAX_VALUE);
+        boolean AB = collisionAlongNormals(collision, collision.A, collision.B);
+        if (!AB) {
+            return false;
+        }
+        boolean BA = collisionAlongNormals(collision, collision.B, collision.A);
+        if (!BA) {
+            return false;
+        }
+        // jos ollaan täällä asti, kappaleet ovat toistensa sisällä
+        // ja törmäysolio on nyt päivitetty
+        // määrittele törmäyspiste:
+        System.out.println("overlap at " + collision.getPoint());
+        System.out.println("normal " + collision.getNormal());
+        collision.getPoint().increment(
+                collision.getNormal().multiply(collision.getOverlap()));
+        return true;
+    }
+    
+    private boolean collisionAlongNormals(RectRectCollision collision, 
+            ItemRectangle A, ItemRectangle B) {
         // käydään läpi kaikki palikan janat
         // jos normaalin suunnassa kappaleet eivät leikkaa, palautetaan false
-        for (Vector normal: normals) {
-            if (overlapAlongNormal(normal, other) < 0) {
+        for (Vector normal: A.normals) {
+            Projection projA = A.projection(normal);
+            Projection projB = B.projection(normal);
+            double overlap = overlapAlongNormal(projA, projB);
+            // jos ei törmäystä kyseisen normaalin suuntaan --> ei törmäystä
+            if (overlap < 0) {
                 return false;
-            }
-        }
-        // käydään läpi kaikki toisen palikan janat
-        for (Vector normal: other.normals) {
-            if (other.overlapAlongNormal(normal, this) < 0) {
-                return false;
+            } 
+            // tallennetaan pienimmän päällekkäisyyden törmäystiedot
+            else if (overlap < collision.getOverlap()) {
+                setCollision(collision, projA, projB, overlap, normal);
             }
         }
         return true;
     }
     
-    private double overlapAlongNormal(Vector normal, ItemRectangle other) {
-        Projection proj = projection(normal);
-        Projection otherProj = other.projection(normal);
-        return Math.min(otherProj.max - proj.min, proj.max - otherProj.min);
+    private void setCollision(RectRectCollision collision, Projection A, 
+            Projection B, double overlap, Vector normal) {
+        double minOverlap = pointOverlap(A.min, A.max, B.min);
+        double maxOverlap = pointOverlap(A.min, A.max, B.max);
+        if (minOverlap > maxOverlap) {
+            collision.setPoint(B.minVertex);
+            collision.setNormal(normal.multiply(1));
+        } else {
+            collision.setPoint(B.maxVertex);
+            collision.setNormal(normal.multiply(1));
+        }
+        collision.setOverlap(overlap);
+    }
+    
+    private double overlapAlongNormal(Projection A, Projection B) {
+        return Math.min(B.max - A.min, A.max - B.min);
+    }
+    
+    private double pointOverlap(double min, double max, double x) {
+        return Math.min(max - x, x - min);
     }
     
     private Projection projection(Vector normal) {
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
-        Vector minVertex = new Vector();
-        Vector maxVertex = new Vector();
+        Vector minVertex = null;
+        Vector maxVertex = null;
+        // etsi minimi ja maksimi normaalivektorin suunnassa
+        // ja sitä vastaavat monikulmion kulmat
         for (Vector vertex: getVertices()) {
-            double dot = vertex.dot(normal);
+            Vector absVertex = vertex.add(position);
+            double dot = absVertex.dot(normal);
             if (dot < min) {
                 min = dot;
-                minVertex = vertex;
+                minVertex = absVertex;
             } if (dot > max) {
                 max = dot;
-                maxVertex = vertex;
+                maxVertex = absVertex;
             }
         }
         return new Projection(min, max, minVertex, maxVertex);
     }
     
-    @Override
-    public boolean resolveCollision(ItemRectangle other, double dt,
+    private double calculateRotatingImpulse(double elasticity, 
+            double relVelNormalProjection, Item other, RectRectCollision collision) {
+        return -(1. + elasticity)*relVelNormalProjection/
+                (invMass + other.invMass + 
+                momentumTerm(this, collision) + 
+                momentumTerm(other, collision));
+    }
+    
+    private double momentumTerm(Item item, RectRectCollision collision) {
+        Vector relPos = collision.getPoint().substract(item.position);
+        Vector normal = collision.getNormal();
+        return item.invMoment*Math.pow(relPos.cross(normal), 2);
+    }
+    
+    private void applyRotatingImpulse(RectRectCollision collision, 
+            double impulse, Item item) {
+        Vector normal = collision.getNormal();
+        Vector relativeCollisionPoint = 
+                collision.getPoint().substract(item.position);
+        item.velocityIncrement.increment(
+                normal.multiply(impulse*item.invMass));
+//        System.out.println("relColCross " + relativeCollisionPoint.cross(normal));
+        item.angularVelocityIncrement += 
+                item.invMoment*relativeCollisionPoint.cross(normal)*impulse;
+//        System.out.println("rel col point " + relativeCollisionPoint);
+    }
+    
+//    @Override
+    public boolean resolveCollision_old(ItemRectangle other, double dt,
             Vector gravity, int iterations) {
         
         // suhteellinen sijainti toisesta kappaleesta
@@ -195,7 +291,7 @@ public class ItemRectangle extends Item {
         Vector normal = normal(overlap, relPos);
         
         // siirretään myöhemmin kappaleita poispäin toisistaan
-        overlapCorrection(other, overlap, normal);
+        overlapCorrection(other, normal, -overlap.dot(normal));
         
         // suhteellinen nopeus
         Vector relVel = velocity.substract(other.velocity);
@@ -249,11 +345,12 @@ public class ItemRectangle extends Item {
     public double calculateElasticity(
             Vector relVel, double relVelNormalProjection, Item other, 
             double dt, Vector gravity) {
+        // Jos kappaleiden välinen nopeus on painovoiman aiheuttaman luokkaa,
+        // ei elastista törmäystä kiitos.
         if (relVel.square() > gravity.multiply(dt).square() - Lib.EPSILON) {
-            final double elasticityLimit = 0.2;
-            if (Math.abs(relVelNormalProjection) > elasticityLimit) {
-                return Math.min(material.elasticity, other.material.elasticity);
-            }
+            // hatusta heitetty kaava, jolla keksitään elastisuus 
+            // kahden kappaleen välisessä törmäyksessä
+            return Math.min(material.elasticity, other.material.elasticity);
         }
         return 0.;
     }
@@ -267,10 +364,10 @@ public class ItemRectangle extends Item {
                 normal.multiply(-impulse*other.invMass));
     }
     
-    private void overlapCorrection(Item other, Vector overlap, Vector normal) {
+    private void overlapCorrection(Item other, Vector normal, 
+            double penetration) {
         double sinkCorrectFraction = .5;
         double slop = 0.;
-        double penetration = -overlap.dot(normal);
         Vector correction = normal.multiply(
                 Math.max(penetration - slop, 0)/
                 (invMass + other.invMass)*sinkCorrectFraction);

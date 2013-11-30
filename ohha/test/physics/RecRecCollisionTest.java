@@ -4,8 +4,6 @@ package physics;
 import logic.Vector;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -13,7 +11,7 @@ import static org.junit.Assert.*;
  *
  * @author juho
  */
-public class AAR_AAR_CollisionTest {
+public class RecRecCollisionTest {
     
     Material m;
     ItemRectangle rectangle;
@@ -22,16 +20,16 @@ public class AAR_AAR_CollisionTest {
     Vector normal;
     double impulse;
     
-    public AAR_AAR_CollisionTest() {
+    public RecRecCollisionTest() {
         m = new Material(1., .5, .3);
         rectangle = new ItemRectangle(
-                new Vector(0, 0), 0., new Vector(0., 0.), 
+                new Vector(0, 0), 0., new Vector(0., 0.), 0.,
                 m, 2, 1, false);
         mass1 = new ItemRectangle(
-            new Vector(0, 0), 0., new Vector(1., 1.), 
+            new Vector(0, 0), 0., new Vector(1., 1.), 0.,
                 m, 2, 2, false);
         mass2 = new ItemRectangle(
-            new Vector(0, 0), 0., new Vector(-1., -1.), 
+            new Vector(0, 0), 0., new Vector(-1., -1.), 0.,
                 m, 2, 3, false);
         normal = new Vector(1, 0);
     }
@@ -39,7 +37,7 @@ public class AAR_AAR_CollisionTest {
     @Test
     public void overlapCorrect() {
         ItemRectangle other = new ItemRectangle(
-                new Vector(0, 0), 0., new Vector(0., 0.), 
+                new Vector(0, 0), 0., new Vector(0., 0.), 0.,
                 m, 1, 1, false);
         Vector relPos = new Vector(1, .5);
         Vector overlap = rectangle.calculateOverlap(other, relPos);
