@@ -1,7 +1,5 @@
 Aihe: fysiikkasimulaattori
 
-Tämä on vielä aika vanha versio, anteeksipyytelyt koodikatselmoijalle.
-
 Kiinteiden kappaleiden, suorakaiteiden, fysiikkaa (törmäyksiä) simuloiva ohjelma, joka piirtää kappaleet reaaliaikaisesti ikkunaan.
 
 Törmäysten lisäksi kappaleet kokevat myös painovoiman.
@@ -9,13 +7,9 @@ Törmäysten lisäksi kappaleet kokevat myös painovoiman.
 Simulaatiota ajetaan vakiolla aika-askeleella siten, että aika-askel on vähintään ennaltamäärätty vakio.
 
 Toimintoja:
- - suorakulmioiden liikemäärän vaihto
+ - suorakulmioiden liikemäärän ja liikemäärämomentin vaihto
  - kappalekohtainen materiaali
  
 Tulevia toimintoja:
  - kitka
- - liikemäärämomentin vaihto
-
-Mahdollisia tulevia toimintoja:
  - käyttäjän mahdollisuus lisätä kappaleita
- - ympyrät

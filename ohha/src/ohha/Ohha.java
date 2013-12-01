@@ -19,8 +19,8 @@ public class Ohha {
     public static void main(String[] args) {
 //        collisionTest1();
 //        collisionTest2();
-        scenario();
-//        clusterScenario();
+//        scenario();
+        clusterScenario();
 //        sinkScenario();
 //        standardScenario();
 //        drawRectangle();
