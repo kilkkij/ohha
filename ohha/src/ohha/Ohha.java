@@ -17,8 +17,9 @@ import physics.SimulationEnvironment;
 public class Ohha {
     
     public static void main(String[] args) {
-        collisionTest();
-//        scenario();
+//        collisionTest1();
+//        collisionTest2();
+        scenario();
 //        clusterScenario();
 //        sinkScenario();
 //        standardScenario();
@@ -64,7 +65,7 @@ public class Ohha {
 //        simEnv.run();
 //    }
     
-    public static void collisionTest() {
+    public static void collisionTest1() {
         // ei painovoimaa
         Simulation sim = new Simulation(new Vector(0., 0.));
         Material m = new Material(1., .3, .3);
@@ -75,6 +76,22 @@ public class Ohha {
         sim.addItem(new ItemRectangle(
                 new Vector(.7, 0.8), 0.0, new Vector(-.0, 0.), 0.1,
                 m, 2., .3, false));
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 400, 400, 100.);
+        ui.run();
+        simEnv.run();
+    }
+    
+    public static void collisionTest2() {
+        Simulation sim = new Simulation(new Vector(0., -.1));
+        Material m = new Material(1., .3, .3);
+        // kaksi törmäävää kappaletta
+        sim.addItem(new ItemRectangle(
+                new Vector(.0, .0), -0.1, new Vector(.0, 0.), 0.,
+                m, 1., 1., false));
+        sim.addItem(new ItemRectangle(
+                new Vector(.0, -1.), 0.0, new Vector(-.0, 0.), 0.,
+                m, 2., .3, true));
         SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
         UI ui = new UI(simEnv, 400, 400, 100.);
         ui.run();

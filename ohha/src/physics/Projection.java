@@ -1,4 +1,6 @@
-package logic;
+package physics;
+
+import logic.Vector;
 
 /**
  * Projektio, joka on apuluokka monikulmioiden "tahkojen" suuntaisen 
@@ -18,6 +20,10 @@ public class Projection {
         this.max = max;
         this.minVertex = minVertex;
         this.maxVertex = maxVertex;
-    } 
+    }
+    
+    public double overlapAlongNormal(Projection other) {
+        return Math.min(other.max - min, max - other.min);
+    }
 
 }
