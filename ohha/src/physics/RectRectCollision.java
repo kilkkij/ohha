@@ -11,10 +11,15 @@ public class RectRectCollision {
     private ItemRectangle normalItem;
     private Vector point;
     private Vector normal;
+    private Vector tangent;
     private double overlap;
     private double relVelNormalProjection;
+    private double relVelTangentProjection;
     private Vector relVel;
-
+    private double elasticity;
+    private double friction;
+    private Vector impulse;
+    
     public RectRectCollision(ItemRectangle A, ItemRectangle B) {
         this.A = A;
         this.B = B;
@@ -24,19 +29,24 @@ public class RectRectCollision {
         if (!happens()) {
             return false;
         }
-        System.out.println("normal " + normal);
-        System.out.println("relVel " + relVel);
-        System.out.println("relVelNormalProjection " + relVelNormalProjection);
+//        System.out.println("relVel " + relVel);
+//        System.out.println("normal " + normal);
+//        System.out.println("relVelNormalProjection " + relVelNormalProjection);
         if (relVelNormalProjection > 0) {
-            System.out.println("------collision aborted------");
+//            System.out.println("------collision aborted------");
             return false;
         }
-        double impulse = calculateImpulse(relVelNormalProjection, dt, gravity);
-        applyRotatingImpulse(impulse, pointItem);
-        applyRotatingImpulse(-impulse, normalItem);
+        calculateTangent();
+//        System.out.println("tangent " + tangent);
+//        System.out.println("relVelTangentProjection " + relVelTangentProjection);
+        calculateElasticity(dt, gravity);
+        friction = normalItem.material.collisionFriction(pointItem.material);
+        calculateImpulses();
+        applyImpulse(impulse, pointItem);
+        applyImpulse(impulse.multiply(-1), normalItem);
         overlapCorrection();
-        System.out.println("impulse " + impulse);
-        System.out.println("------collision resolved------");
+//        System.out.println("impulse " + impulse);
+//        System.out.println("------collision resolved------");
         return true;
     }
     
@@ -54,7 +64,7 @@ public class RectRectCollision {
         // jos ollaan täällä asti, kappaleet ovat toistensa sisällä
         // ja törmäysolio on nyt päivitetty
         // siirretään törmäyspiste normaalia pitkin:
-//        point.increment(normal.multiply(overlap));
+        point.increment(normal.multiply(overlap));
         return true;
     }
     
@@ -106,6 +116,14 @@ public class RectRectCollision {
         }
     }
     
+    private void calculateTangent() {
+        tangent = normal.cross(1);
+        relVelTangentProjection = relVel.dot(tangent);
+        double flip = Math.copySign(1, relVelTangentProjection);
+        tangent.applyMultiplication(flip);
+        relVelTangentProjection *= flip;
+    }
+    
     private void calculateVelocities() {
         relVel = pointItem.velocity.substract(normalItem.velocity);
         Vector totalRelativeVelocity = relVel.add(
@@ -122,45 +140,59 @@ public class RectRectCollision {
         return Math.min(max - x, x - min);
     }
     
-    private double calculateElasticity(Vector relVel, 
-            double dt, Vector gravity) {
+    private void calculateElasticity(double dt, Vector gravity) {
         // Jos kappaleiden välinen nopeus on painovoiman aiheuttaman luokkaa,
         // ei elastista törmäystä kiitos.
-        if (relVel.square() < gravity.multiply(dt).square() - Lib.EPSILON) {
-            return 0.;
+        if (relVel.square() > 2*gravity.multiply(dt).square() - Lib.EPSILON) {
+            elasticity = A.material.collisionElasticity(B.material);
+        } else {
+            elasticity = 0.;
         }
-        return A.material.collisionElasticity(B.material.elasticity);
     }
     
-    private double calculateImpulse(double relVelNormalProjection, 
-            double dt, Vector gravity) {
-        double elasticity = calculateElasticity(relVel, dt, gravity);
-        return -(1. + elasticity)*relVelNormalProjection/
+    private void calculateImpulses() {
+        double normalImpulse = -(1. + elasticity)*relVelNormalProjection/
                 (A.invMass + B.invMass + 
-                momentumTerm(A) + momentumTerm(B));
+                momentumTerm(A, normal) + momentumTerm(B, normal));
+        double tangentImpulse = -(1. + elasticity)*relVelTangentProjection/
+                (A.invMass + B.invMass +
+                momentumTerm(A, tangent) + momentumTerm(B, tangent));
+//        if (tangentImpulse > 0) {
+//            System.out.println("ALERT ALERT ALERT ALERT VARUD VARUUUUUD");
+//        }
+        if (-tangentImpulse > normalImpulse*friction) {
+            tangentImpulse = -normalImpulse*friction;
+        }
+        impulse = tangent.multiply(tangentImpulse).add(
+                normal.multiply(normalImpulse));
     }
     
-    private double momentumTerm(Item item) {
+    private double momentumTerm(Item item, Vector vector) {
         Vector relPos = point.substract(item.position);
-        return item.invMoment*Math.pow(relPos.cross(normal), 2);
+        return item.invMoment*Math.pow(relPos.cross(vector), 2);
     }
     
-    private void applyRotatingImpulse(double impulse, Item item) {
+    private void applyImpulse(Vector I, Item item) {
         Vector relativeCollisionPoint = point.substract(item.position);
-        item.velocityIncrement.increment(
-                normal.multiply(impulse*item.invMass));
+        item.velocityIncrement.increment(I.multiply(item.invMass));
         item.angularVelocityIncrement += 
-                item.invMoment*relativeCollisionPoint.cross(normal)*impulse;
+                item.invMoment*relativeCollisionPoint.cross(I);
     }
     
     private void overlapCorrection() {
         double sinkCorrectFraction = .5;
-        double slop = 0.;
+        double slop = 0.0;
         Vector correction = normal.multiply(
                 Math.max(overlap - slop, 0)/
-                (pointItem.invMass + B.invMass)*sinkCorrectFraction);
-        pointItem.warp.increment(correction.multiply(pointItem.invMass));
-        normalItem.warp.increment(correction.multiply(-normalItem.invMass));
+                (A.invMass + B.invMass)*sinkCorrectFraction);
+        overlapCorrection(pointItem, correction);
+        overlapCorrection(normalItem, correction.multiply(-1));
+    }
+    
+    private void overlapCorrection(ItemRectangle item, Vector correction) {
+        if (!item.static_()) {
+            item.warp.increment(correction.multiply(item.invMass));
+        }
     }
 
     public Vector getNormal() {

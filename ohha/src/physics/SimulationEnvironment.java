@@ -61,9 +61,13 @@ public class SimulationEnvironment implements ActionListener, Runnable {
     public void run() {
         timer.start();
     }
-
+    
     public Iterable<Item> getItems() {
         return sim.getItems();
     }
-    
+
+    public Simulation getSim() {
+        return sim;
+    }
+
 } 

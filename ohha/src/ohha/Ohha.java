@@ -17,14 +17,27 @@ import physics.SimulationEnvironment;
 public class Ohha {
     
     public static void main(String[] args) {
+        plain();
 //        collisionTest1();
 //        collisionTest2();
+//        frictionTest1();
+//        frictionTest2();
+//        staticPointTest();
 //        scenario();
-        clusterScenario();
+//        clusterScenario();
 //        sinkScenario();
 //        standardScenario();
 //        drawRectangle();
 //        rotatingRectangle();
+    }
+    
+    public static void plain() {
+        Simulation sim = new Simulation(new Vector(0., -.2));
+        Material m = new Material(1., .3, .5);
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 600, 600, 100.);
+        ui.run();
+        simEnv.run();
     }
     
     public static void rotatingRectangle() {
@@ -65,6 +78,21 @@ public class Ohha {
 //        simEnv.run();
 //    }
     
+    public static void staticPointTest() {
+        Simulation sim = new Simulation(new Vector(0., -.1));
+        Material m = new Material(1., .3, .3);
+        sim.addItem(new ItemRectangle(
+                new Vector(0., 1), -0.0, new Vector(.0, 0.), 0.,
+                m, 1., 1., false));
+        sim.addItem(new ItemRectangle(
+                new Vector(0., -1.), Math.PI/4., new Vector(-.0, 0.), 0.1,
+                m, 1., 1., true));
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 400, 400, 100.);
+        ui.run();
+        simEnv.run();
+    }
+    
     public static void collisionTest1() {
         // ei painovoimaa
         Simulation sim = new Simulation(new Vector(0., 0.));
@@ -92,6 +120,42 @@ public class Ohha {
         sim.addItem(new ItemRectangle(
                 new Vector(.0, -1.), 0.0, new Vector(-.0, 0.), 0.,
                 m, 2., .3, true));
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 400, 400, 100.);
+        ui.run();
+        simEnv.run();
+    }
+    
+    public static void frictionTest1() {
+        Simulation sim = new Simulation(new Vector(0., -.1));
+        Material m = new Material(1., .3, .5);
+        // kaksi törmäävää kappaletta
+        sim.addItem(new ItemRectangle(
+                new Vector(-1., .0), 0.1, new Vector(.5, 0.), 0.,
+                m, 1., 1., false));
+        sim.addItem(new ItemRectangle(
+                new Vector(.0, -1.), 0.0, new Vector(-.0, 0.), 0.,
+                m, 3., .3, true));
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 400, 400, 100.);
+        ui.run();
+        simEnv.run();
+    }
+    
+    public static void frictionTest2() {
+        Simulation sim = new Simulation(new Vector(0., -.1));
+        Material m1 = new Material(1., .3, .1);
+        Material m2 = new Material(1., .3, .8);
+        // kaksi törmäävää kappaletta
+        sim.addItem(new ItemRectangle(
+                new Vector(.5, 1.0), 0.1, new Vector(0., 0.), 0.,
+                m1, .5, .5, false));
+        sim.addItem(new ItemRectangle(
+                new Vector(1., 1.5), 0.1, new Vector(.0, 0.), 0.,
+                m2, .5, .5, false));
+        sim.addItem(new ItemRectangle(
+                new Vector(.0, -.5), 0.7, new Vector(-.0, 0.), 0.,
+                m2, 4., .3, true));
         SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
         UI ui = new UI(simEnv, 400, 400, 100.);
         ui.run();
@@ -137,30 +201,30 @@ public class Ohha {
         ui.run();
         simEnv.run();
     }
-//
-//    public static void sinkScenario() {
-//        Simulation sim = new Simulation(0.5);
-//        Material m = new Material(1., .5, .3);
-//        sim.addItem(new AxisAlignedRectangle(
-//                new Vector(0., 0.), new Vector(0., 0.), 
-//                m, 2., .3));
-//        sim.addItem(new AxisAlignedRectangle(
-//                new Vector(.5, .2), new Vector(0., 0.), 
-//                m, .3, .3));
-//        sim.addItem(new AxisAlignedRectangle(
-//                new Vector(.5, .4), new Vector(0., 0.), 
-//                m, .3, .3));
-//        sim.addItem(new AxisAlignedRectangle(
-//                new Vector(.6, .6), new Vector(0., 0.), 
-//                m, .3, .3));
-//        sim.addItem(new AxisAlignedRectangle(
-//                new Vector(.3, .6), new Vector(0., 0.), 
-//                m, .3, .3));        
-//        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
-//        UI ui = new UI(simEnv, 400, 400, 100.);
-//        ui.run();
-//        simEnv.run();
-//    }
+
+    public static void sinkScenario() {
+        Simulation sim = new Simulation(new Vector(0., -.5));
+        Material m = new Material(1., .5, .3);
+        sim.addItem(new ItemRectangle(
+                new Vector(0., -0.5), 0., new Vector(0., 0.), 0.,
+                m, 2., .3, true));
+        sim.addItem(new ItemRectangle(
+                new Vector(.0, -.2), 0., new Vector(0., 0.), 0.,
+                m, .3, .3, false));
+        sim.addItem(new ItemRectangle(
+                new Vector(.0, .3), 0., new Vector(0., 0.), 0.,
+                m, .3, .3, false));
+        sim.addItem(new ItemRectangle(
+                new Vector(.0, 1.), 0., new Vector(0., 0.), 0.,
+                m, .3, .3, false));
+        sim.addItem(new ItemRectangle(
+                new Vector(.4, -.1), 0., new Vector(0., 0.), 0.,
+                m, .3, .3, false));        
+        SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
+        UI ui = new UI(simEnv, 400, 400, 100.);
+        ui.run();
+        simEnv.run();
+    }
     
     private static void addRandomItems(Simulation sim, Material m) {
         Random random = new Random();

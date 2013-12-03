@@ -25,11 +25,15 @@ public class Material {
     /**
      * Hatusta heitetty kaava, jolla keksitään elastisuus 
      * kahden kappaleen välisessä törmäyksessä.
-     * @param otherElasticity
+     * @param otherMaterial
      * @return
      */
-    public double collisionElasticity(double otherElasticity) {
-        return Math.min(elasticity, otherElasticity);
+    public double collisionElasticity(Material otherMaterial) {
+        return Math.min(elasticity, otherMaterial.elasticity);
+    }
+    
+    public double collisionFriction(Material otherMaterial) {
+        return (friction + otherMaterial.friction)*.5;
     }
     
 }

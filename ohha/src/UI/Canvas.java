@@ -1,10 +1,12 @@
 package UI;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import javax.swing.JPanel;
@@ -19,24 +21,26 @@ import physics.Item;
  */
 public class Canvas extends JPanel {
     
-    private final UI ui;
-    private final double dpu;
-    private final int width;
-    private final int height;
+    private final UI userInterface;
+    private double dpu;
+    private int centerX;
+    private int centerY;
+    private final Color chosenColor = Color.RED;
+    private final Color staticColor = Color.GRAY;
+    private final Color itemColor = Color.BLACK;
+    private final float borderThickness = 2;
 
     /**
      * 
      * @param ui käyttöliittymäolio
      * @param dpu "dots per unit"
-     * @param width leveys (jolla lasketaan kappaleiden sijainnit)
-     * @param height korkeus (jolla lasketaan kappaleiden sijainnit)
      */
-    public Canvas(UI ui, double dpu, int width, int height) {
+    public Canvas(UI ui, double dpu) {
         super.setBackground(Color.WHITE);
-        this.ui = ui;
+        this.userInterface = ui;
         this.dpu = dpu;
-        this.width = width;
-        this.height = height;
+        centerX = 0;
+        centerY = 0;
     }
 
     /**
@@ -51,12 +55,11 @@ public class Canvas extends JPanel {
         g2D.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
-        drawItems(ui.getItems(), g2D);
-
+        drawItems(g2D);
     }
     
-    private void drawItems(Iterable<Item> items, Graphics2D graphics) {
-        for (Item item: ui.getItems()) {
+    private void drawItems(Graphics2D graphics) {
+        for (Item item: userInterface.getItems()) {
             drawItem(item, graphics);
         }
     }
@@ -80,10 +83,17 @@ public class Canvas extends JPanel {
         double dx = rectangle.width*dpu;
         double dy = rectangle.height*dpu;
         
-        // 
+        // Suorakulmio
         Rectangle r = new Rectangle(
             (int) x, (int) y,
             (int) dx, (int) dy);
+        
+        // määrittele väri
+        if (item.static_()) {
+            graphics.setColor(staticColor);
+        } else {
+            graphics.setColor(itemColor);
+        }
         
         // käännä
         Path2D.Double path = new Path2D.Double();
@@ -95,25 +105,46 @@ public class Canvas extends JPanel {
         path.transform(t);
         
         // piirrä
-        graphics.draw(path);
+        graphics.fill(path);
         
-        // käsittele kierto
-//        graphics.rotate(-angle, x, y);
-//        graphics.rotate(angle, x, y);
-//        graphics.translate(width/2, height/2);
-//        graphics.rotate(-angle);
-//        graphics.translate(-width/2, -height/2);
+        // ääriviivat
+        if (item.CHOSEN) {
+            graphics.setColor(chosenColor);
+            Stroke oldStroke = graphics.getStroke();
+            graphics.setStroke(new BasicStroke(borderThickness));
+            graphics.draw(path);
+            graphics.setStroke(oldStroke);
+        } 
         
-        // piirrä
-//        graphics.drawRect(x, y, dx, dy);
-//        graphics.fillRect(x, y, dx, dy);
     }
     
     private double toCanvasCoordinatesX(double x) {
-        return width/2 + (dpu*x);
+        return getWidth()/2 + dpu*x + centerX;
     }
 
     private double toCanvasCoordinatesY(double y) {
-        return height/2 - (dpu*y);
+        return getHeight()/2 - dpu*y - centerY;
+    }
+    
+    public double toPhysicsCoordinatesX(double x) {
+        return (x - getWidth()/2 - centerX)/dpu;
+    }
+    
+    public double toPhysicsCoordinatesY(double y) {
+        return (getHeight()/2 - y - centerY)/dpu;
+    }
+
+    public void moveView(int x, int y) {
+        centerX -= x;
+        centerY -= y;
+    }
+
+    public void zoom(double d) {
+        // zoom ulos ja zoom sisään käsitellään vähän eri tavalla
+        if (d > 0) {
+            dpu *= 1. - d;
+        } else {
+            dpu /= 1. + d;
+        }
     }
 } 

@@ -29,6 +29,11 @@ public class Vector {
         y += other.getY();
     }
     
+    public void applyMultiplication(double factor) {
+        x *= factor;
+        y *= factor;
+    }
+    
     public void applyRotation(double angle) {
         double newX = x*Math.cos(angle) - y*Math.sin(angle);
         y = x*Math.sin(angle) + y*Math.cos(angle);

@@ -9,6 +9,7 @@ import static logic.Lib.EPSILON;
  */
 public abstract class Item {
     
+    public boolean CHOSEN;
     protected Vector position;
     protected double angle;
     protected Vector velocity;
@@ -38,6 +39,7 @@ public abstract class Item {
         this.angularVelocityIncrement = 0;
         this.material = material;
         this.warp = new Vector(0., 0.);
+        this.CHOSEN = false;
     }
     
     /**
@@ -67,6 +69,7 @@ public abstract class Item {
      */
     public void move(double dt) {
         position.increment(velocity.multiply(dt));
+//        System.out.println("position of " + invMass + ": " + position);
     }
     
     /**
@@ -74,7 +77,11 @@ public abstract class Item {
      * @param dt aika-askel
      */
     public void turn(double dt) {
-        angle += angularVelocity*dt;
+        rotate(angularVelocity*dt);
+    }
+    
+    public void rotate(double rotationAngle) {
+        angle += rotationAngle;
     }
    
     /**
@@ -100,6 +107,25 @@ public abstract class Item {
         warp.clear();
     }
     
+    public boolean static_() {
+        return invMass < EPSILON;
+    }
+    
+    public void setStatic() {
+        invMass = 0;
+        invMoment = 0;
+        velocity.clear();
+        velocityIncrement.clear();
+        angularVelocity = 0;
+        angularVelocityIncrement = 0.;
+        warp.clear();
+    }
+    
+    public void setFree() {
+        invMass = invMass();
+        invMoment = invMoment();
+    }
+    
     public Vector getPosition() {
         return position;
     }
@@ -111,8 +137,12 @@ public abstract class Item {
     public Vector getVelocity() {
         return velocity;
     }
-
+    
+    abstract public double invMass();
+    
+    abstract public double invMoment();
+    
     abstract public boolean resolveCollision(ItemRectangle rectangle, 
             double dt, Vector gravity, int iterations);
-        
+
 }

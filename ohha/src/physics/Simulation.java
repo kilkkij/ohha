@@ -31,9 +31,9 @@ public class Simulation {
      */
     public void step(double dt) {
         resolveCollisions(dt);
-        applyMovement(dt);
         applyCorrections();
         applyImpulses(dt);
+        applyMovement(dt);
         clearAccelerations();
     }
 
@@ -74,6 +74,11 @@ public class Simulation {
             item.clearAcceleration();
         }
     }
+
+    public void clear() {
+        items.clear();
+    }
+
     
     /**
      * Lisää esineen.

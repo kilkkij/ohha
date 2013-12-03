@@ -1,11 +1,10 @@
 package physics;
 import logic.Vector;
 import java.util.ArrayList;
-import logic.Lib;
 import logic.Edge;
 
 /**
- * Suorakaide. Määrittelee muodon ja törmäykset toisten kappaleiden kanssa.
+ * Suorakaide.
  * @author juho
  */
 public class ItemRectangle extends Item {
@@ -33,7 +32,7 @@ public class ItemRectangle extends Item {
         this.width = width;
         this.height = height;
         this.invMass = invMass(static_, width, height, material.density);
-        this.invMoment = invInertia(static_, width, height, material.density);
+        this.invMoment = invMoment(static_, width, height, material.density);
         this.vertices = vertices(position, width, height, angle);
         this.normals = normals(position, width, height, angle);
     }
@@ -109,7 +108,12 @@ public class ItemRectangle extends Item {
         }
     }
     
-    public static double invInertia(boolean static_, 
+    @Override
+    public double invMass() {
+        return 1./(width*height*material.density);
+    }
+    
+    public static double invMoment(boolean static_, 
             double width, double height, double density) {
         if (static_) {
             return 0;
@@ -121,10 +125,20 @@ public class ItemRectangle extends Item {
     }
     
     @Override
-    public void turn(double dt) {
-        super.turn(dt);
-        applyRotation(vertices, angularVelocity*dt);
-        applyRotation(normals, angularVelocity*dt);
+    public double invMoment() {
+        return 1./(width*height*material.density/12*
+                    (width*width + height*height));
+    }
+    
+    private void applyRotation(double rotationAngle) {
+        applyRotation(getVertices(), rotationAngle);
+        applyRotation(normals, rotationAngle);
+    }
+    
+    @Override
+    public void rotate(double rotationAngle) {
+        super.rotate(rotationAngle);
+        applyRotation(rotationAngle);
     }
     
     @Override
@@ -141,7 +155,7 @@ public class ItemRectangle extends Item {
         Vector maxVertex = null;
         // etsi minimi ja maksimi normaalivektorin suunnassa
         // ja sitä vastaavat monikulmion kulmat
-        for (Vector vertex: vertices) {
+        for (Vector vertex: getVertices()) {
             Vector absVertex = vertex.add(position);
             double dot = absVertex.dot(normal);
             if (dot < min) {
@@ -164,6 +178,10 @@ public class ItemRectangle extends Item {
     
     public ArrayList<Vector> getNormals() {
         return normals;
+    }
+
+    public ArrayList<Vector> getVertices() {
+        return vertices;
     }
 
 }
