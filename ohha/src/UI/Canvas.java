@@ -141,10 +141,14 @@ public class Canvas extends JPanel {
 
     public void zoom(double d) {
         // zoom ulos ja zoom sisään käsitellään vähän eri tavalla
+        double zoomfactor;
         if (d > 0) {
-            dpu *= 1. - d;
+            zoomfactor = 1. - d;
         } else {
-            dpu /= 1. + d;
+            zoomfactor = 1./(1. + d);
         }
+        dpu *= zoomfactor;
+        centerX *= zoomfactor;
+        centerY *= zoomfactor;
     }
 } 

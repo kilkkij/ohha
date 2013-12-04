@@ -15,6 +15,7 @@ public class RectRectCollision {
     private double overlap;
     private double relVelNormalProjection;
     private double relVelTangentProjection;
+    private Vector totalRelativeVelocity;
     private Vector relVel;
     private double elasticity;
     private double friction;
@@ -64,7 +65,7 @@ public class RectRectCollision {
         // jos ollaan täällä asti, kappaleet ovat toistensa sisällä
         // ja törmäysolio on nyt päivitetty
         // siirretään törmäyspiste normaalia pitkin:
-        point.increment(normal.multiply(overlap));
+//        point.increment(normal.multiply(overlap));
         return true;
     }
     
@@ -118,7 +119,7 @@ public class RectRectCollision {
     
     private void calculateTangent() {
         tangent = normal.cross(1);
-        relVelTangentProjection = relVel.dot(tangent);
+        relVelTangentProjection = totalRelativeVelocity.dot(tangent);
         double flip = Math.copySign(1, relVelTangentProjection);
         tangent.applyMultiplication(flip);
         relVelTangentProjection *= flip;
@@ -126,7 +127,7 @@ public class RectRectCollision {
     
     private void calculateVelocities() {
         relVel = pointItem.velocity.substract(normalItem.velocity);
-        Vector totalRelativeVelocity = relVel.add(
+        totalRelativeVelocity = relVel.add(
                 rotationalVelocity(pointItem, point).substract(
                 rotationalVelocity(normalItem, point)));
         relVelNormalProjection = normal.dot(totalRelativeVelocity);
@@ -157,9 +158,6 @@ public class RectRectCollision {
         double tangentImpulse = -(1. + elasticity)*relVelTangentProjection/
                 (A.invMass + B.invMass +
                 momentumTerm(A, tangent) + momentumTerm(B, tangent));
-//        if (tangentImpulse > 0) {
-//            System.out.println("ALERT ALERT ALERT ALERT VARUD VARUUUUUD");
-//        }
         if (-tangentImpulse > normalImpulse*friction) {
             tangentImpulse = -normalImpulse*friction;
         }

@@ -18,7 +18,7 @@ public class ItemBuilder {
         this.building = false;
         this.userInterface = userInterface;
         this.simEnv = simEnv;
-        this.material = new Material(1., .3, .3);
+        this.material = new Material(1., .3, .5);
     } 
 
     public void drag(int x, int y) {
