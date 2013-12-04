@@ -17,7 +17,7 @@ import physics.SimulationEnvironment;
 public class Ohha {
     
     public static void main(String[] args) {
-        plain();
+        emptyScenario();
 //        collisionTest1();
 //        collisionTest2();
 //        frictionTest1();
@@ -31,9 +31,8 @@ public class Ohha {
 //        rotatingRectangle();
     }
     
-    public static void plain() {
+    public static void emptyScenario() {
         Simulation sim = new Simulation(new Vector(0., -.2));
-        Material m = new Material(1., .3, .5);
         SimulationEnvironment simEnv = new SimulationEnvironment(sim, 50);
         UI ui = new UI(simEnv, 600, 600, 100.);
         ui.run();

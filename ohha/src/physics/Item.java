@@ -9,7 +9,6 @@ import static logic.Lib.EPSILON;
  */
 public abstract class Item {
     
-    public boolean CHOSEN;
     protected Vector position;
     protected double angle;
     protected Vector velocity;
@@ -39,7 +38,6 @@ public abstract class Item {
         this.angularVelocityIncrement = 0;
         this.material = material;
         this.warp = new Vector(0., 0.);
-        this.CHOSEN = false;
     }
     
     /**

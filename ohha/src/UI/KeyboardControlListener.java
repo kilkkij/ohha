@@ -62,19 +62,21 @@ class KeyboardControlListener implements KeyListener {
         boolean atLeastOneChosen = false;
         for (Iterator<Item> it = ui.getItems().iterator(); it.hasNext();) {
             Item item = it.next();
-            if (item.CHOSEN) {
+            if (ui.isSelected(item)) {
                 it.remove();
+                ui.unSelect(item);
                 atLeastOneChosen = true;
             }
         }
         if (!atLeastOneChosen) {
             simEnv.getSim().clear();
+            ui.unSelectAll();
         }
     }
     
     private void conditionalRotate(double angle) {
         for (Item item: ui.getItems()) {
-            if (item.CHOSEN) {
+            if (ui.isSelected(item)) {
                 item.rotate(angle);
             }
         }
@@ -82,7 +84,7 @@ class KeyboardControlListener implements KeyListener {
     
     private void toggleSelectedStatic() {
         for (Item item: ui.getItems()) {
-            if (item.CHOSEN) {
+            if (ui.isSelected(item)) {
                 if (!item.static_()) {
                     setAllItemsStatic();
                     return;
@@ -94,7 +96,7 @@ class KeyboardControlListener implements KeyListener {
     
     private void setAllItemsStatic() {
         for (Item item: ui.getItems()) {
-            if (item.CHOSEN) {
+            if (ui.isSelected(item)) {
                 item.setStatic();
             }
         }
@@ -102,7 +104,7 @@ class KeyboardControlListener implements KeyListener {
     
     private void setAllItemsFree() {
         for (Item item: ui.getItems()) {
-            if (item.CHOSEN) {
+            if (ui.isSelected(item)) {
                 item.setFree();
             }
         }

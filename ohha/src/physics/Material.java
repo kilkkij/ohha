@@ -32,6 +32,12 @@ public class Material {
         return Math.min(elasticity, otherMaterial.elasticity);
     }
     
+    /**
+     * Hatusta heitetty kaava, jolla keksitään kitkakerroin 
+     * kahden kappaleen välisessä törmäyksessä.
+     * @param otherMaterial
+     * @return
+     */
     public double collisionFriction(Material otherMaterial) {
         return (friction + otherMaterial.friction)*.5;
     }

@@ -49,7 +49,7 @@ public class ItemBuilder {
         ItemRectangle item = new ItemRectangle(
                 new Vector(x, y), 0., new Vector(0, 0), 0., 
                 material, width, height, true);
-        item.CHOSEN = true;
+        userInterface.select(item);
         simEnv.getSim().addItem(item);
         
     }

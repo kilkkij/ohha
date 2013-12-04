@@ -108,7 +108,7 @@ public class Canvas extends JPanel {
         graphics.fill(path);
         
         // ääriviivat
-        if (item.CHOSEN) {
+        if (userInterface.isSelected(item)) {
             graphics.setColor(chosenColor);
             Stroke oldStroke = graphics.getStroke();
             graphics.setStroke(new BasicStroke(borderThickness));

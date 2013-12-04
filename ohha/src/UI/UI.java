@@ -2,6 +2,8 @@ package UI;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import physics.Item;
@@ -23,6 +25,7 @@ public class UI extends JFrame implements Runnable {
     private final double viewZoomUnit = .2;
     public final double rotateUnit = Math.PI/32.;
     private final ItemBuilder itemBuilder;
+    private final Set<Item> selected;
     
     /**
      *
@@ -37,6 +40,7 @@ public class UI extends JFrame implements Runnable {
         this.height = height;
         this.simEnv = simEnv;
         this.itemBuilder = new ItemBuilder(this, simEnv);
+        this.selected = new HashSet<>();
     }
 
     /**
@@ -101,6 +105,22 @@ public class UI extends JFrame implements Runnable {
         canvas.repaint();
     }
 
+    void select(Item item) {
+        selected.add(item);
+    }
+
+    void unSelect(Item item) {
+        selected.remove(item);
+    }
+
+    void unSelectAll() {
+        selected.clear();
+    }
+    
+    boolean isSelected(Item item) {
+        return selected.contains(item);
+    }
+    
     Iterable<Item> getItems() {
         return simEnv.getItems();
     }

@@ -19,7 +19,7 @@ public class MouseClickListener implements MouseListener {
         this.userInterface = userInterface;
         this.simEnv = simEnv;
         this.itemBuilder = itemBuilder;
-    } 
+    }
 
     @Override
     public void mouseClicked(MouseEvent me) {
@@ -30,17 +30,17 @@ public class MouseClickListener implements MouseListener {
             if (item instanceof ItemRectangle) {
                 if (pointWithin(x, y, (ItemRectangle) item)) {
                     somethingWasClicked = true;
-                    if (item.CHOSEN) {
-                        item.CHOSEN = false;
+                    if (userInterface.isSelected(item)) {
+                        userInterface.unSelect(item);
                     } else {
-                        item.CHOSEN = true;
+                        userInterface.select(item);
                     }
                 }
             }
         }
         if (!somethingWasClicked) {
             for (Item item: simEnv.getItems()) {
-                item.CHOSEN = false;
+                userInterface.unSelect(item);
             }
         }
     }
