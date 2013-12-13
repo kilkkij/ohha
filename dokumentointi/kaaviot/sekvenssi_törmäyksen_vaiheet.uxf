@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.umlet.element.SequenceDiagram</type>
+    <coordinates>
+      <x>54</x>
+      <y>45</y>
+      <w>738</w>
+      <h>450</h>
+    </coordinates>
+    <panel_attributes>title: Kappaleen luonti
+_:Simulation_~sim|_A:ItemRectangle_~A|_B:ItemRectangle~B_|_:RectRectCollision~collision_
+sim-&gt;&gt;&gt;A:resolveCollision(B, dt, gravity, iterationCount)
+A-&gt;&gt;&gt;A:resolveCollision((ItemRectangle) B, dt, gravity, iterations)
+A-&gt;&gt;&gt;collision:new RectRectCollision(B)
+A-&gt;&gt;&gt;collision:resolve(dt, gravity, iterations)
+collision-&gt;&gt;&gt;collision:happens
+collision-&gt;&gt;&gt;collision:calculateTangent
+collision-&gt;&gt;&gt;collision:calculateElasticity
+collision-&gt;&gt;&gt;collision:calculateImpulses
+collision-&gt;&gt;&gt;A:applyImpulse(point, impulse)
+collision-&gt;&gt;&gt;B:applyImpulse(point, impulse.multiply(-1))
+collision-&gt;&gt;&gt;collision:overlapCorrection
+collision-&gt;&gt;&gt;A:overlapCorrection(correction)
+collision-&gt;&gt;&gt;B:overlapCorrection(correction.multiply(-1))</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
