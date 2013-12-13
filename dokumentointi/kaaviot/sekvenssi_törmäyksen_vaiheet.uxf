@@ -8,7 +8,7 @@
       <w>738</w>
       <h>450</h>
     </coordinates>
-    <panel_attributes>title: Kappaleen luonti
+    <panel_attributes>title: Törmäyksen hallinan vaiheet
 _:Simulation_~sim|_A:ItemRectangle_~A|_B:ItemRectangle~B_|_:RectRectCollision~collision_
 sim-&gt;&gt;&gt;A:resolveCollision(B, dt, gravity, iterationCount)
 A-&gt;&gt;&gt;A:resolveCollision((ItemRectangle) B, dt, gravity, iterations)
