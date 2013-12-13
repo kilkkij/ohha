@@ -124,10 +124,6 @@ public class UI extends JFrame implements Runnable {
         canvas.repaint();
     }
 
-    Iterable<Item> getItems() {
-        return simEnv.getItems();
-    }
-
     Canvas getCanvas() {
         return canvas;
     }

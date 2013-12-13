@@ -5,16 +5,8 @@ import logic.Vector;
 
 public class RectRectCollision {
     
-    /**
-     * Törmäyksen toinen kappale.
-     */
-    public final ItemRectangle A;
-
-    /**
-     * Törmäyksen toinen kappale.
-     */
-    public final ItemRectangle B;
-    
+    private final ItemRectangle A;
+    private final ItemRectangle B;
     private ItemRectangle pointItem;
     private ItemRectangle normalItem;
     private Vector point;
@@ -69,8 +61,8 @@ public class RectRectCollision {
         // Laske impulssi.
         calculateImpulses();
         // Jakele impulssi kappaleille.
-        applyImpulse(impulse, pointItem);
-        applyImpulse(impulse.multiply(-1), normalItem);
+        pointItem.applyImpulse(point, impulse);
+        normalItem.applyImpulse(point, impulse.multiply(-1));
         // Siirrä kappaleita myöhemmin toisistaan poispäin.
         overlapCorrection();
         //
@@ -198,13 +190,6 @@ public class RectRectCollision {
     private double momentumTerm(Item item, Vector vector) {
         Vector relPos = point.substract(item.position);
         return item.invMoment*Math.pow(relPos.cross(vector), 2);
-    }
-    
-    private void applyImpulse(Vector I, Item item) {
-        Vector relativeCollisionPoint = point.substract(item.position);
-        item.velocityIncrement.increment(I.multiply(item.invMass));
-        item.angularVelocityIncrement += 
-                item.invMoment*relativeCollisionPoint.cross(I);
     }
     
     private void overlapCorrection() {

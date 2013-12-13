@@ -79,6 +79,9 @@ public class Simulation {
         }
     }
 
+    /**
+     * Poista viitteet kaikista kappaleista.
+     */
     public void clear() {
         items.clear();
     }
@@ -97,7 +100,7 @@ public class Simulation {
      * Poistaa esineen.
      * @param itemToRemove
      */
-    public void removeItem(Item itemToRemove) {
+    public void remove(Item itemToRemove) {
         // käy läpi kaikki esineet ja etsi poistettava
         for (Iterator<Item> it = items.iterator(); it.hasNext();) {
             Item item = it.next();
@@ -107,10 +110,6 @@ public class Simulation {
                 return;
             }
         }
-    }
-
-    public Iterable<Item> getItems() {
-        return items;
     }
 
 } 

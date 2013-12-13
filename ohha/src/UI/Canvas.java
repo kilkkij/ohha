@@ -175,7 +175,7 @@ public class Canvas extends JPanel {
         for (Iterator<Item> it = itemMap.keySet().iterator(); it.hasNext();) {
             Item item = it.next();
             if (itemMap.get(item).isSelected()) {
-                userInterface.getSimEnv().getSim().removeItem(item);
+                userInterface.getSimEnv().getSim().remove(item);
                 it.remove();
                 atLeastOneChosen = true;
             }

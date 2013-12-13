@@ -3,8 +3,8 @@
   <element>
     <type>com.umlet.element.SequenceDiagram</type>
     <coordinates>
-      <x>40</x>
-      <y>165</y>
+      <x>25</x>
+      <y>140</y>
       <w>845</w>
       <h>145</h>
     </coordinates>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
-  <zoom_level>7</zoom_level>
+  <zoom_level>6</zoom_level>
   <element>
     <type>com.umlet.element.SequenceDiagram</type>
     <coordinates>
-      <x>63</x>
-      <y>77</y>
-      <w>791</w>
-      <h>497</h>
+      <x>60</x>
+      <y>84</y>
+      <w>702</w>
+      <h>426</h>
     </coordinates>
     <panel_attributes>title: Simulaation rakenne
 _:RectRectCollision_~collision|_:ItemRectangle~item_|_:Simulation~sim_|_:SimulationEnvironment~simenv_|_:UI_~ui

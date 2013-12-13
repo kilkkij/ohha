@@ -12,22 +12,20 @@ import static org.junit.Assert.*;
  */
 public class SimulationTest {
     
-    Simulation sim;
-    
     public SimulationTest() {
-        sim = new Simulation(new Vector(0., 0.));
-        Material m = new Material(1., .5, .3);
-        sim.addItem(new ItemRectangle(
-                new Vector(0., 0.), 0., new Vector(1., 0.), 0.,
-                m, 1., 1., true));
+
     }
     
     @Test
     public void movesObjects() {
-        Vector oldPos = new Vector(
-                sim.getItems().iterator().next().getPosition());
+        Simulation sim = new Simulation(new Vector(0., 0.));
+        ItemRectangle item = new ItemRectangle(
+                new Vector(0., 0.), 0., new Vector(1., 0.), 0.,
+                new Material(1., .5, .3), 1., 1., true);
+        sim.addItem(item);
+        Vector oldPos = new Vector(item.getPosition());
         sim.step(1.);
-        Vector newPos = sim.getItems().iterator().next().getPosition();
+        Vector newPos = item.getPosition();
         Vector expectedChange = new Vector(1., 0.);
         assertEquals(expectedChange.getX(), newPos.substract(oldPos).getX(), 
                 EPSILON);

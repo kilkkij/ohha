@@ -1,12 +1,15 @@
 Aihe: fysiikkasimulaattori
 
-Kiinteiden kappaleiden, suorakaiteiden, fysiikkaa (törmäyksiä) simuloiva ohjelma, joka piirtää kappaleet reaaliaikaisesti ikkunaan.
+Kiinteiden kappaleiden, suorakaiteiden, fysiikkaa (törmäyksiä) simuloiva ohjelma, joka piirtää kappaleet reaaliaikaisesti ikkunaan. Törmäysten lisäksi kappaleet kokevat myös painovoiman. Käyttäjä voi lisätä ja poistaa kappaleita, pyörittää niitä, sekä navigoida ikkunassa.
 
-Törmäysten lisäksi kappaleet kokevat myös painovoiman.
+Simulaatiota ajetaan vakiolla aika-askeleella siten, että aika-askel on vähintään ennaltamäärätty vakio. Tämän hoitaa luokka SimulationEnvironment. 
 
-Simulaatiota ajetaan vakiolla aika-askeleella siten, että aika-askel on vähintään ennaltamäärätty vakio.
+Simulation-olio pitää sisällään kappaleet (Item), ja muodostaa kutsuu näiden fysiikkaa päivittäviä metodeja (sekvenssi_simulaation_vaiheet.png). Kaikki kappaleet ovat suorakaiteita (ItemRectangle), mutta enimmiltä osin infrastruktuuri muiden kappaleiden lisäämiseen on olemassa. Kaikki kappaletyypit perivät luokan Item. Lisäksi olisi määriteltävä törmäysluokat siten, että jokaista mahdollista eri kappaleen välistä törmäystä (esim. monikulmio vs. ympyrä) vastaa yksi luokka.  
 
-Toimintoja:
- - suorakulmioiden liikemäärän ja liikemäärämomentin vaihto
- - kitka
- - käyttäjän navigointi ja kappaleiden lisäys/poisto
+Item-olio muodostaa törmäysolion, jota kutsumalla määritellään, tapahtuuko kappaleiden välillä törmäys. Jos tapahtuu, etsitään törmäyspiste, -normaali, -tangentti sekä muita parametrejä, ja asetetaan nopeuden muutokset kappaleen atribuutteihin lisättäviksi. Kuvassa sekvenssi_törmäysten_vaiheet.png kappaleet törmäävät (muutoin törmäys lopetettaisiin kesken) ja molemmilla kappaleilla on massa (eli ne eivät ole staattisia).
+
+Item-oliot eivät ole puhtaasti riippuvaisia Simulation-oliosta, vaan niitä pidetään tietorakenteessa myös käyttöliittymän puolella Canvas-oliossa. Näin jokaista fysikaalista kappaletta kohden voidaan pitää tallessa käyttöliittymän puolella tieto mm. siitä, onko kappale valittu.
+
+Kappaleiden luominen ja poisto tapahtuu käyttöliittymän kautta. Poisto vaatii tiedon valituista kappaleista (sekvenssi_kappaleen_poisto.png).
+
+

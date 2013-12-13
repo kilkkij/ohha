@@ -105,6 +105,13 @@ public abstract class Item {
         warp.clear();
     }
     
+    public void applyImpulse(Vector point, Vector I) {
+        Vector relativeCollisionPoint = point.substract(position);
+        velocityIncrement.increment(I.multiply(invMass));
+        angularVelocityIncrement += 
+                invMoment*relativeCollisionPoint.cross(I);
+    }
+    
     /**
      *
      * @param correction
