@@ -61,6 +61,15 @@ public class VectorTest {
     }
     
     @Test
+    public void scalarCrossWorks() {
+        Vector A = new Vector(1., 0.);
+        double z = 2.;
+        Vector expResult = new Vector(0., 2.);
+        assertEquals(expResult.getX(), A.cross(z).getX(), EPSILON);
+        assertEquals(expResult.getY(), A.cross(z).getY(), EPSILON);
+    }
+    
+    @Test
     public void distanceWorks() {
         double expResult = Math.sqrt(18);
         double result = vector.distance(other);
@@ -76,9 +85,9 @@ public class VectorTest {
     @Test
     public void rotationRotates30Degrees() {
         vector = new Vector(1., 0.);
-        Vector rotated = vector.rotate(30./180*Math.PI);
-        assertEquals(Math.sqrt(3)/2, rotated.getX(), EPSILON);
-        assertEquals(.5, rotated.getY(), EPSILON);
+        vector.applyRotation(30./180*Math.PI);
+        assertEquals(Math.sqrt(3)/2, vector.getX(), EPSILON);
+        assertEquals(.5, vector.getY(), EPSILON);
     }
 
 }

@@ -1,9 +1,6 @@
 package UI;
 
-import java.awt.Container;
 import java.awt.Dimension;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import physics.Item;
@@ -23,9 +20,13 @@ public class UI extends JFrame implements Runnable {
     private final double dpu;
     private final int viewMovementUnit = 10;
     private final double viewZoomUnit = .2;
-    public final double rotateUnit = Math.PI/32.;
     private final ItemBuilder itemBuilder;
-    private final Set<Item> selected;
+    private boolean building;
+
+    /**
+     * Jos kappaletta pyöritetään, se pyörii tämän verran (radiaaneissa).
+     */
+    public final double rotateUnit = Math.PI/32.;
     
     /**
      *
@@ -39,8 +40,8 @@ public class UI extends JFrame implements Runnable {
         this.width = width;
         this.height = height;
         this.simEnv = simEnv;
-        this.itemBuilder = new ItemBuilder(this, simEnv);
-        this.selected = new HashSet<>();
+        this.itemBuilder = new ItemBuilder(this);
+        this.building = false;
     }
 
     /**
@@ -55,9 +56,9 @@ public class UI extends JFrame implements Runnable {
     }
     
     private void addListeners() {
-        canvas.addMouseListener(new MouseClickListener(this, simEnv, itemBuilder));
+        canvas.addMouseListener(new MouseClickListener(this, itemBuilder));
         canvas.addMouseMotionListener(new MouseDragListener(itemBuilder));
-        addKeyListener(new KeyboardControlListener(this, simEnv));
+        addKeyListener(new KeyboardControlListener(this));
     }
     
     private void setupFrame() {
@@ -74,26 +75,44 @@ public class UI extends JFrame implements Runnable {
         add(canvas);
     }
     
+    /**
+     * Visuaalisen ympäristön hallintaa.
+     */
     public void moveViewLeft() {
         canvas.moveView(-viewMovementUnit, 0);
     }
     
+    /**
+     * Visuaalisen ympäristön hallintaa.
+     */
     public void moveViewRight() {
         canvas.moveView(viewMovementUnit, 0);
     }
     
+    /**
+     * Visuaalisen ympäristön hallintaa.
+     */
     public void moveViewUp() {
         canvas.moveView(0, viewMovementUnit);
     }
     
+    /**
+     * Visuaalisen ympäristön hallintaa.
+     */
     public void moveViewDown() {
         canvas.moveView(0, -viewMovementUnit);
     }
 
+    /**
+     * Visuaalisen ympäristön hallintaa.
+     */
     public void zoomOut() {
         canvas.zoom(viewZoomUnit);
     }
     
+    /**
+     * Visuaalisen ympäristön hallintaa.
+     */
     public void zoomIn() {
         canvas.zoom(-viewZoomUnit);
     }
@@ -105,28 +124,50 @@ public class UI extends JFrame implements Runnable {
         canvas.repaint();
     }
 
-    void select(Item item) {
-        selected.add(item);
-    }
-
-    void unSelect(Item item) {
-        selected.remove(item);
-    }
-
-    void unSelectAll() {
-        selected.clear();
-    }
-    
-    boolean isSelected(Item item) {
-        return selected.contains(item);
-    }
-    
     Iterable<Item> getItems() {
         return simEnv.getItems();
     }
 
     Canvas getCanvas() {
         return canvas;
+    }
+    
+    SimulationEnvironment getSimEnv() {
+        return simEnv;
+    }
+    
+    /**
+     * Aloittaa uuden palikan rakentaminen. Tätä kutsutaan, jotta piirrettävä
+     * kappale näkyisi ruudulla.
+     * @param rectangle
+     */
+    public void startBuilding(RectangleInProgress rectangle) {
+        building = true;
+        canvas.setUnfinishedItem(rectangle);
+    }
+    
+    /**
+     * Lopeettaa uuden kappaleen näyttäminen.
+     */
+    public void stopBuilding() {
+        building = false;
+    }
+    
+    /**
+     * Ollaanko piirtämässä kappaletta?
+     * @return
+     */
+    public boolean isBuilding() {
+        return building;
+    }
+    
+    /**
+     * Lisää kappaleen. Lisää myös kappaleen simulaatioon.
+     * @param item
+     */
+    public void addItem(Item item) {
+        canvas.addItem(item);
+        simEnv.getSim().addItem(item);
     }
 
 }

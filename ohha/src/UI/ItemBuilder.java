@@ -1,57 +1,57 @@
 package UI;
 
-import logic.Vector;
-import physics.ItemRectangle;
 import physics.Material;
-import physics.SimulationEnvironment;
 
+/**
+ * Piirtäjäolio. Käsittelee uuden suorakaiteen muodostamisen vaiheet.
+ * @author juho
+ */
 public class ItemBuilder {
     
-    private int startX;
-    private int startY;
-    private boolean building;
     private final UI userInterface;
-    private final SimulationEnvironment simEnv;
     private final Material material;
+    private RectangleInProgress rectangle;
     
-    public ItemBuilder(UI userInterface, SimulationEnvironment simEnv) {
-        this.building = false;
+    /**
+     *
+     * @param userInterface
+     */
+    public ItemBuilder(UI userInterface) {
         this.userInterface = userInterface;
-        this.simEnv = simEnv;
         this.material = new Material(1., .3, .5);
     } 
 
-    public void drag(int x, int y) {
-        if (!building) {
+    /**
+     * Päivitä rakenteilla oleva suorakaide.
+     * @param x kulman x-koordinaatti
+     * @param y kulman y-koordinaatti
+     */
+    public void update(int x, int y) {
+        if (!userInterface.isBuilding()) {
             startBuilding(x, y);
-            building = true;
         }
+        rectangle.updateSize(x, y);
     }
 
     private void startBuilding(int x, int y) {
-        building = true;
-        startX = x;
-        startY = y;
+        // Tee uusi suorakaideolio.
+        rectangle = new RectangleInProgress(userInterface.getCanvas(), x, y);
+        // Ilmoita käyttöliittymälle, jotta se osaa näyttää esineen ruudulla.
+        userInterface.startBuilding(rectangle);
     }
 
+    /**
+     * Jos esine oli tekeillä, tämä metodi lopettaa tekovaiheen ja luo
+     * uuden esineen käyttliittymälle.
+     * @param finishX viimeinen x-koordinaatti
+     * @param finishY viimeinen y-koordinaatti
+     */
     public void finishBuilding(int finishX, int finishY) {
-        if (!building) {
+        if (!userInterface.isBuilding()) {
             return;
         }
-        building = false;
-        Canvas canvas = userInterface.getCanvas();
-        double x = canvas.toPhysicsCoordinatesX(startX);
-        double cornerX = canvas.toPhysicsCoordinatesX(finishX);
-        double y = canvas.toPhysicsCoordinatesY(startY); 
-        double cornerY = canvas.toPhysicsCoordinatesY(finishY);
-        double width = Math.abs(x - cornerX)*2;
-        double height = Math.abs(y - cornerY)*2;
-        ItemRectangle item = new ItemRectangle(
-                new Vector(x, y), 0., new Vector(0, 0), 0., 
-                material, width, height, true);
-        userInterface.select(item);
-        simEnv.getSim().addItem(item);
-        
+        userInterface.stopBuilding();
+        userInterface.addItem(rectangle.toSimulationItem(material));
     }
 
 } 

@@ -43,14 +43,14 @@ public class SimulationEnvironment implements ActionListener, Runnable {
      */
     @Override
     public void actionPerformed(ActionEvent ae) {
-        logTime(ae);
+//        logTime(ae);
         sim.step(((float) timestep)/1000);
         ui.update();
     }
     
     private void logTime(ActionEvent ae) {
         long dt = ae.getWhen() - timestamp;
-//        System.out.println("aika-askel: " + dt + " ms");
+        System.out.println("aika-askel: " + dt + " ms");
         timestamp += dt;
     }
 

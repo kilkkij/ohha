@@ -1,6 +1,7 @@
 package physics;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import logic.Vector;
 
@@ -21,7 +22,10 @@ public class Simulation {
      * @param gravity painovoimavektori
      */
     public Simulation(Vector gravity) {
+        // Tämä ei liene paras tietorakenne, mutta se tekee parien löytämisen 
+        // helpoksi.
         items = new ArrayList<>();
+        //
         this.gravity = gravity;
     }
     
@@ -87,6 +91,22 @@ public class Simulation {
      */
     public void addItem(Item item) {
         items.add(item);
+    }
+    
+    /**
+     * Poistaa esineen.
+     * @param itemToRemove
+     */
+    public void removeItem(Item itemToRemove) {
+        // käy läpi kaikki esineet ja etsi poistettava
+        for (Iterator<Item> it = items.iterator(); it.hasNext();) {
+            Item item = it.next();
+            if (item.equals(itemToRemove)) {
+                it.remove();
+                // esineen tulisi esiintyä vain kerran
+                return;
+            }
+        }
     }
 
     public Iterable<Item> getItems() {

@@ -1,7 +1,6 @@
 package physics;
 import logic.Vector;
 import java.util.ArrayList;
-import logic.Edge;
 
 /**
  * Suorakaide.
@@ -9,8 +8,8 @@ import logic.Edge;
  */
 public class ItemRectangle extends Item {
     
-    public final double width;
-    public final double height;
+    public final double WIDTH;
+    public final double HEIGHT;
     private final ArrayList<Vector> vertices;
     private final ArrayList<Vector> normals;
     
@@ -29,29 +28,22 @@ public class ItemRectangle extends Item {
             double angularVelocity,
             Material material, double width, double height, boolean static_) {
         super(position, angle, velocity, angularVelocity, material);
-        this.width = width;
-        this.height = height;
+        this.WIDTH = width;
+        this.HEIGHT = height;
         this.invMass = invMass(static_, width, height, material.density);
         this.invMoment = invMoment(static_, width, height, material.density);
         this.vertices = vertices(position, width, height, angle);
         this.normals = normals(position, width, height, angle);
     }
     
-    public static ArrayList<Edge> edges(double width, double height) {
-        //
-        ArrayList<Edge> edges = new ArrayList<>();
-        // kansi
-        edges.add(new Edge(new Vector(0., height/2), new Vector(0., width)));
-        // pohja
-        edges.add(new Edge(new Vector(0., -height/2), new Vector(0., -width)));
-        // vasen
-        edges.add(new Edge(new Vector(width/2., 0.), new Vector(-height, 0.)));
-        // oikea
-        edges.add(new Edge(new Vector(width/2., 0.), new Vector(height, 0.)));
-        //
-        return edges;
-    }
-    
+    /**
+     * Normaalivektorit parametrejä vastaavalle nelikulmiolle (pyöritettynä)
+     * @param pos
+     * @param width
+     * @param height
+     * @param angle
+     * @return
+     */
     public static ArrayList<Vector> normals(Vector pos, 
             double width, double height, double angle) {
         //
@@ -70,6 +62,14 @@ public class ItemRectangle extends Item {
         return normals;
     }
     
+    /**
+     * Suhteelliset kulmien sijainnit parametrejä vastaavalle nelikulmiolle.
+     * @param pos
+     * @param width
+     * @param height
+     * @param angle
+     * @return
+     */
     public static ArrayList<Vector> vertices(
             Vector pos, double width, double height, double angle) {
         //
@@ -99,6 +99,14 @@ public class ItemRectangle extends Item {
         }
     }
     
+    /**
+     * Käänteinen massa
+     * @param static_
+     * @param width
+     * @param height
+     * @param density
+     * @return
+     */
     public static double invMass(boolean static_, 
             double width, double height, double density) {
         if (static_) {
@@ -110,24 +118,31 @@ public class ItemRectangle extends Item {
     
     @Override
     public double invMass() {
-        return 1./(width*height*material.density);
+        return invMass(false, WIDTH, HEIGHT, material.density);
     }
     
+    /**
+     *
+     * @param static_
+     * @param width
+     * @param height
+     * @param density
+     * @return
+     */
     public static double invMoment(boolean static_, 
             double width, double height, double density) {
         if (static_) {
             return 0;
         } else {
-            double inertia = width*height*density/12*
+            double moment = width*height*density/12*
                     (width*width + height*height);
-            return 1./inertia;
+            return 1./moment;
         }
     }
     
     @Override
     public double invMoment() {
-        return 1./(width*height*material.density/12*
-                    (width*width + height*height));
+        return invMoment(false, WIDTH, HEIGHT, material.density);
     }
     
     private void applyRotation(double rotationAngle) {
@@ -148,6 +163,11 @@ public class ItemRectangle extends Item {
         return collision.resolve(dt, gravity, iterations);
     }
     
+    /**
+     *
+     * @param normal
+     * @return
+     */
     public Projection projection(Vector normal) {
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
@@ -169,6 +189,12 @@ public class ItemRectangle extends Item {
         return new Projection(min, max, minVertex, maxVertex);
     }
     
+    /**
+     *
+     * @param overlap
+     * @param relPos
+     * @return
+     */
     public Vector normal(Vector overlap, Vector relPos) {
         if (overlap.getX() < overlap.getY()) {
             return new Vector(Math.copySign(1, relPos.getX()), 0);

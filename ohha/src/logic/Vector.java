@@ -9,31 +9,55 @@ public class Vector {
     private double x;
     private double y;
     
+    /**
+     * Tyhjä vektori.
+     */
     public Vector() {
         this.x = 0;
         this.y = 0;
     }
     
+    /**
+     * Vektori, jolla on määrätyt komponentit.
+     * @param x
+     * @param y
+     */
     public Vector(double x, double y) {
         this.x = x;
         this.y = y;
     }
     
+    /**
+     * Kopio.
+     * @param other
+     */
     public Vector(Vector other) {
         this.x = other.getX();
         this.y = other.getY();
     }
     
+    /**
+     * Lisää vektoriin toinen vektori.
+     * @param other
+     */
     public void increment(Vector other) {
         x += other.getX();
         y += other.getY();
     }
     
+    /**
+     * Kerro vektorin komponentteja.
+     * @param factor
+     */
     public void applyMultiplication(double factor) {
         x *= factor;
         y *= factor;
     }
     
+    /**
+     * Käännä vektoria kulman verran.
+     * @param angle
+     */
     public void applyRotation(double angle) {
         double newX = x*Math.cos(angle) - y*Math.sin(angle);
         y = x*Math.sin(angle) + y*Math.cos(angle);
@@ -89,12 +113,16 @@ public class Vector {
             Math.pow(y - other.y, 2));
     }
     
+    /**
+     * Vektorin itseisarvon neliö.
+     * @return
+     */
     public double square() {
         return x*x + y*y;
     }
         
     /**
-     * 
+     * Kahden vektorin summa.
      * @param other
      * @return
      */
@@ -103,7 +131,7 @@ public class Vector {
     }
     
     /**
-     *
+     * Kahden vektorin erotus. Toinen vektori vähennetään kyseisestä.
      * @param other
      * @return
      */
@@ -112,18 +140,12 @@ public class Vector {
     }
     
     /**
-     *
+     * Kahden vektorin tulo.
      * @param factor
      * @return
      */
     public Vector multiply(double factor) {
         return new Vector(factor*x, factor*y);
-    }
-    
-    public Vector rotate(double angle) {
-        return new Vector(
-                x*Math.cos(angle) - y*Math.sin(angle),
-                x*Math.sin(angle) + y*Math.cos(angle));
     }
     
     /**

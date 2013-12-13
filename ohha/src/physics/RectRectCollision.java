@@ -5,8 +5,16 @@ import logic.Vector;
 
 public class RectRectCollision {
     
+    /**
+     * Törmäyksen toinen kappale.
+     */
     public final ItemRectangle A;
+
+    /**
+     * Törmäyksen toinen kappale.
+     */
     public final ItemRectangle B;
+    
     private ItemRectangle pointItem;
     private ItemRectangle normalItem;
     private Vector point;
@@ -21,58 +29,80 @@ public class RectRectCollision {
     private double friction;
     private Vector impulse;
     
+    /**
+     *
+     * @param A
+     * @param B
+     */
     public RectRectCollision(ItemRectangle A, ItemRectangle B) {
         this.A = A;
         this.B = B;
     }
     
+    /**
+     * "Ratkaisee" törmäysongelman, jos sellainen on. Jakelee impulsseja. 
+     * Täällä tapahtuu paljon fysiikkamagiaa. Itse kappaleiden siirtelyt ja
+     * nopeuden muutokset tapahtuu myöhemmin.
+     * Päällekkäisyydenhavaitsemisalgoritmi soveltaa periaatetta 
+     * Separating Axis Theorem, joka on selitetty hyvin osoitteessa 
+     * http://www.sevenson.com.au/actionscript/sat/
+     * @param dt
+     * @param gravity
+     * @param iterations
+     * @return
+     */
     public boolean resolve(double dt, Vector gravity, int iterations) {
+        // Jos törmäys tapahtuu, jatketaan.
         if (!happens()) {
             return false;
         }
-//        System.out.println("relVel " + relVel);
-//        System.out.println("normal " + normal);
-//        System.out.println("relVelNormalProjection " + relVelNormalProjection);
+        // Tässä vaiheessa törmäykseen liittyviä parametreja on laskettu.
+        // Jos törmäyspiste erkanee, ei jatketa.
         if (relVelNormalProjection > 0) {
-//            System.out.println("------collision aborted------");
             return false;
         }
+        // Reunan suuntainen vektori.
         calculateTangent();
-//        System.out.println("tangent " + tangent);
-//        System.out.println("relVelTangentProjection " + relVelTangentProjection);
+        // Elastisuus ja kitka.
         calculateElasticity(dt, gravity);
         friction = normalItem.material.collisionFriction(pointItem.material);
+        // Laske impulssi.
         calculateImpulses();
+        // Jakele impulssi kappaleille.
         applyImpulse(impulse, pointItem);
         applyImpulse(impulse.multiply(-1), normalItem);
+        // Siirrä kappaleita myöhemmin toisistaan poispäin.
         overlapCorrection();
-//        System.out.println("impulse " + impulse);
-//        System.out.println("------collision resolved------");
+        //
         return true;
     }
     
     private boolean happens() {
         // pidetään kirjaa pienimmän päällekkäisyyden akselista
         overlap = Double.MAX_VALUE;
+        // tutkitaan mahdollista törmäystä kappaleen A normaalien suunnassa
         boolean AB = collisionAlongNormals(A, B);
         if (!AB) {
             return false;
         }
+        // tutkitaan mahdollista törmäystä kappaleen B normaalien suunnassa
         boolean BA = collisionAlongNormals(B, A);
         if (!BA) {
             return false;
         }
-        // jos ollaan täällä asti, kappaleet ovat toistensa sisällä
-        // ja törmäysolio on nyt päivitetty
-        // siirretään törmäyspiste normaalia pitkin:
+        // Jos ollaan täällä asti, kappaleet ovat toistensa sisällä
+        // ja törmäysolio on nyt päivitetty.
+        // Tässä vaiheessa voisi kappaletta siirtää takaisin iteratiivisesti,
+        // kunnes löytyy törmäyspiste.
+        // Huono ratkaisu on siirtää törmäyspiste normaalia pitkin:
 //        point.increment(normal.multiply(overlap));
         return true;
     }
     
     private boolean collisionAlongNormals(ItemRectangle normalItem, 
             ItemRectangle pointItem) {
-        // käydään läpi kaikki palikan janat
-        // jos normaalin suunnassa kappaleet eivät leikkaa, palautetaan false
+        // Käydään läpi kaikki palikan janat.
+        // Jos normaalin suunnassa kappaleet eivät leikkaa, palautetaan false.
         for (Vector n: normalItem.getNormals()) {
             Projection normalProj = normalItem.projection(n);
             Projection pointProj = pointItem.projection(n);
@@ -183,16 +213,10 @@ public class RectRectCollision {
         Vector correction = normal.multiply(
                 Math.max(overlap - slop, 0)/
                 (A.invMass + B.invMass)*sinkCorrectFraction);
-        overlapCorrection(pointItem, correction);
-        overlapCorrection(normalItem, correction.multiply(-1));
+        pointItem.overlapCorrection(correction);
+        normalItem.overlapCorrection(correction.multiply(-1));
     }
     
-    private void overlapCorrection(ItemRectangle item, Vector correction) {
-        if (!item.static_()) {
-            item.warp.increment(correction.multiply(item.invMass));
-        }
-    }
-
     public Vector getNormal() {
         return normal;
     }

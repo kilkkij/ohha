@@ -1,13 +1,8 @@
 
 package physics;
 
-import UI.UI;
 import static logic.Lib.EPSILON;
 import logic.Vector;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

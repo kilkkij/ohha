@@ -2,10 +2,6 @@
 package physics;
 
 import logic.Vector;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -13,12 +9,18 @@ import static org.junit.Assert.*;
  *
  * @author juho
  */
-public class RotatedCollisionTest {
+public class RecRecCollisionTest_happens {
     
-    Material material;
+    private final Material material;
+    private final Vector gravity;
+    private final double dt;
+    private final int iterations;
     
-    public RotatedCollisionTest() {
-        material = new Material(1., .5, .3);
+    public RecRecCollisionTest_happens() {
+        material = new Material(1., 1., 0.);
+        gravity = new Vector(0., 0.);
+        dt = .02;
+        iterations = 1;
     }
     
     @Test
@@ -30,7 +32,8 @@ public class RotatedCollisionTest {
         ItemRectangle B = new ItemRectangle(
                 new Vector(2, 0), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
-//        assertFalse(A.collisionHappens(B));
+        RectRectCollision collision = new RectRectCollision(A, B);
+        assertFalse(collision.resolve(dt, gravity, iterations));
     }
     
     @Test
@@ -42,41 +45,47 @@ public class RotatedCollisionTest {
         ItemRectangle B = new ItemRectangle(
                 new Vector(0, 2), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
-//        assertFalse(A.collisionHappens(B));
+        RectRectCollision collision = new RectRectCollision(A, B);
+        assertFalse(collision.resolve(dt, gravity, iterations));
     }
     
     @Test
     public void alignedCollisionTrue1() {
+        // kappaleet osittain päällekkäin
         ItemRectangle A = new ItemRectangle(
                 new Vector(0, 0), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
         ItemRectangle B = new ItemRectangle(
                 new Vector(0.5, -0.5), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
-//        assertTrue(A.collisionHappens(B));
+        RectRectCollision collision = new RectRectCollision(A, B);
+        assertTrue(collision.resolve(dt, gravity, iterations));
     }
 
     @Test
     public void alignedCollisionTrue2() {
+        // kappaleet toisella tapaa päällekkäin
         ItemRectangle A = new ItemRectangle(
                 new Vector(0, 0), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
         ItemRectangle B = new ItemRectangle(
                 new Vector(-0.5, 0.5), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
-//        assertTrue(A.collisionHappens(B));
+        RectRectCollision collision = new RectRectCollision(A, B);
+        assertTrue(collision.resolve(dt, gravity, iterations));
     }
     
     @Test
     public void rotatedCollisionTrue1() {
-        // törmäys vain vinouden vuoksi
+        // törmäys vain kulman vuoksi
         ItemRectangle A = new ItemRectangle(
                 new Vector(0, 0), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
         ItemRectangle B = new ItemRectangle(
                 new Vector(1.1, 0), Math.PI*.25, new Vector(0., 0.), 0.,
                 material, 1, 1, false);
-//        assertTrue(A.collisionHappens(B));
+        RectRectCollision collision = new RectRectCollision(A, B);
+        assertTrue(collision.resolve(dt, gravity, iterations));
     }
     
     @Test
@@ -89,7 +98,25 @@ public class RotatedCollisionTest {
         ItemRectangle B = new ItemRectangle(
                 new Vector(-.9, -.9), 0., new Vector(0., 0.), 0.,
                 material, 1, 1, false);
-//        assertFalse(A.collisionHappens(B));
+        RectRectCollision collision = new RectRectCollision(A, B);
+        assertFalse(collision.resolve(dt, gravity, iterations));
+    }
+    
+    @Test
+    public void normalCorrect() {
+        ItemRectangle rectangle = new ItemRectangle(
+                new Vector(0, 0), 0., new Vector(0., 0.), 0.,
+                material, 2, 1, false);
+        Vector n = rectangle.normal(
+                new Vector(1., 2.), new Vector(1, 1));
+        Vector expected = new Vector(1, 0);
+        assertEquals(expected, n);
+        n = rectangle.normal(
+                new Vector(1, 1), new Vector(-1, -1));
+        assertTrue(
+                (n.equals(new Vector(-1, 0))) ||
+                (n.equals(new Vector(0, -1)))
+        );
     }
     
 }

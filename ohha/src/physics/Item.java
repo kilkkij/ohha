@@ -105,7 +105,17 @@ public abstract class Item {
         warp.clear();
     }
     
-    public boolean static_() {
+    /**
+     *
+     * @param correction
+     */
+    public void overlapCorrection(Vector correction) {
+        if (!isStatic()) {
+            warp.increment(correction.multiply(invMass));
+        }
+    }
+    
+    public boolean isStatic() {
         return invMass < EPSILON;
     }
     

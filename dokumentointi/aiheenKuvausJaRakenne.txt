@@ -8,8 +8,5 @@ Simulaatiota ajetaan vakiolla aika-askeleella siten, että aika-askel on vähint
 
 Toimintoja:
  - suorakulmioiden liikemäärän ja liikemäärämomentin vaihto
- - kappalekohtainen materiaali
- 
-Tulevia toimintoja:
  - kitka
- - käyttäjän mahdollisuus lisätä kappaleita
+ - käyttäjän navigointi ja kappaleiden lisäys/poisto
