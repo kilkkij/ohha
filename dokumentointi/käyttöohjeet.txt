@@ -1,0 +1,18 @@
+Kiinteiden kappaleiden törmäyksiä simuloiva ohjelma tavoittelee käyttöliittymällään minimalismia ja eleganttiutta.
+
+Simulaatioympäristö käynnistyy välittömästi ruudulle. Voit lisätä ja poistaa kappaleita, sekä lukita tai vapauttaa niitä. Painovoima on vakio, mutta erilaisen dynaamisen ympäristön mahdollistaa zoomaus lähemmäs (suurempi suhteellinen painovoima) ja zoomaus kauemmas (pienempi suhteellinen painovoima). Huomaa, että törmäysalgoritmin puutteet näkyvät parhaiten pienessä mittakaavassa.
+
+Jos olet hukassa, zoomaa ulos. Kaikki kappaleet näkyvät aina, jos ne sijaitsevat ruudun alueella. Kappaleet eivät poistu simulaatiosta tiputtuaan pois näkyviltä!
+
+Hiiren toiminnot:
+    klikkaus: Kappaleen valitseminen tai kaikkien kappaleiden valintojen nollaaminen.
+    raahaus: Uuden suorakulmion lisäys. Kappaleen muodostus alkaa sen keskeltä.
+
+Näppäimistön toiminnot:
+    +           zoom sisään
+    -           zoom ulos
+    (nuolet)    siirrä näkymää
+    z           pyöritä valittuja vastapäivään
+    x           pyöritä valittuja myötäpäivään
+    del         poista kappale (tai kaikki, jos mitään ei ole valittu)
+

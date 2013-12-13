@@ -1,0 +1,65 @@
+Kuvaus yksikkötestiluokista ja varsinaisesta lähdekoodista löytyvistä testimetodeista.
+
+Junit-testit:
+
+VectorTest
+ - vektorimatematiikka
+
+SimulationTest
+ - Simulaation askellus toimii.
+ - Tätä testataan enemmän visuaalisesti.
+
+RecRecCollisionTest_happens
+ - Eri tavoin asetellut kappaleet törmäävät tai eivät törmää toisiinsa odotetusti.
+ - Törmäyksen normaalivektori lasketaan odotetusti.
+
+RecRecCollisionTest_velocities
+ - Impulssien vaihto tapahtuu odotetusti.
+ - Pienempi kappale törmäyksessä muuttaa enemmän nopeuttaan.
+ - Nopeuden muutosten suunnat oikein.
+
+Visuaaliset testit (ohha.Ohha):
+
+collisionTest1
+ - Helppo (hidas) törmäys käsitellän intuitiivisesti.
+ - Liikemäärät ja liikemäärämomentit muuttuvat realistisesti.
+ 
+collisionTest2
+ - Painovoima törmäyksissä toimii (ei valumista tms.)
+
+fullyOverlappingTest1
+ - Samassa pisteessä sijaitsevat kappaleet ei kaada mitään.
+ - Kappaleet liikkuvat pois toistensa sisältä (ei vaatimus).
+
+fullyOverlappingTest2
+ - Kun kappaleet lisäksi liikkuvat toisiinsa nähden, mikään ei kaadu.
+
+frictionTest1
+ - Kappaleet kitkan vaikutuksesta muuttavat liikemäärämomenttiaan.
+
+frictionTest2
+ - Kappaleet pyörivät, kun kitkaa on tarpeeksi.
+
+differentFrictionItemsTest
+ - Kolme kappaletta, joilla eri kitkakerroin.
+ - Jos on tarpeeksi kitkaa, kappale pysähtyy toisen päälle.
+ - Tämä vaatii näköjään aika suuren kitkakertoimen (tässä .3 ja .9), mikä voi johtua ainakin lepokitkan puutteesta.
+
+differentElasticityItemsTest
+ - Kolme kappaletta, joilla eri elastisuus.
+ - Elastisuus 0--> ei pomppimista.
+ - Elastisuus 1--> jatkuvaa pomppimista.
+
+staticPointTest
+ - Taas yksi törmäystesti.
+ - Tämä toi törmäysalgoritmin ongelmia esiin joskus vuonna sinappi.
+
+scenario
+ - Ei erityistä testiä. Useita kappaleita.
+
+clusterScenario
+ - Varmistetaan, että algoritmit ovat edes riittävän tehokkaat usealle kymmenelle kappaleelle.
+
+sinkScenario
+ - Useita kappaleita päällekkäin.
+ - Tuo esiin painovoiman ja törmäysalgoritmin suoraviivaisuuden ongelmat.

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>6</zoom_level>
+  <element>
+    <type>com.umlet.element.SequenceDiagram</type>
+    <coordinates>
+      <x>48</x>
+      <y>126</y>
+      <w>702</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>title: Kappaleen poisto
+_:KeyboardListener_~user|_:UI~ui_|_:Canvas_~canvas|_:SimulationEnvironment~simenv_|_:Simulation_~sim
+user-&gt;&gt;&gt;canvas:removeItems
+iframe{:for item: items
+
+iframe}</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

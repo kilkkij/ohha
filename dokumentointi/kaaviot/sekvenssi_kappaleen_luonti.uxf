@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>5</zoom_level>
+  <element>
+    <type>com.umlet.element.SequenceDiagram</type>
+    <coordinates>
+      <x>40</x>
+      <y>165</y>
+      <w>845</w>
+      <h>145</h>
+    </coordinates>
+    <panel_attributes>title: Kappaleen luonti
+_:MouseDragListener_~user|_:RectangleInProgress~rectangle_|_:ItemBuilder~itembuilder_|_:UI~ui_|_:Canvas_~canvas|_:SimulationEnvironment~simenv_|_:Simulation_~sim
+user-&gt;&gt;&gt;itembuilder:finishBuilding
+itembuilder-&gt;&gt;&gt;ui:stopBuilding
+itembuilder-&gt;&gt;&gt;rectangle:toSimulationItem
+itembuilder-&gt;&gt;&gt;ui:addItem(simulationItem)
+ui-&gt;&gt;&gt;canvas:addItem(graphicsItem)
+ui-&gt;&gt;&gt;sim:addItem(simulationItem)</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
